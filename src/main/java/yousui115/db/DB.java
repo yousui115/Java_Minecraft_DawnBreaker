@@ -2,9 +2,12 @@ package yousui115.db;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -15,6 +18,7 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import yousui115.db.common.CommonProxy;
 import yousui115.db.enchantment.EnchantBoD;
+import yousui115.db.entity.EntityDB;
 import yousui115.db.entity.EntityDBExplode;
 import yousui115.db.event.EntityPropertiesEventHandler;
 import yousui115.db.event.EventHooks;
@@ -41,21 +45,40 @@ public class DB
     public static Item itemDB;
     public static String nameDB = "dawnbreaker";
 
+    public static Item itemMeridama;
+    public static String nameMeridama = "meridama";
+
     //■
     public static Enchantment encBoD;
 
+    //■
+    public static ToolMaterial toolMaterial;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         //■アイテム生成
         // ▼1.アイテムのインスタンス生成
-        itemDB = new ItemDB(ToolMaterial.EMERALD)
+        itemMeridama = new Item()
+                        {
+                            public boolean hasEffect(ItemStack stack)
+                            {
+                                return true;
+                            }
+                        }
+                        .setUnlocalizedName(nameMeridama)
+                        .setCreativeTab(CreativeTabs.tabMaterials);
+
+        toolMaterial = EnumHelper.addToolMaterial("DB", 2, 1561, 6.0F, 2.0F, 14).setRepairItem(new ItemStack(itemMeridama));
+
+        itemDB = new ItemDB(toolMaterial)
                         .setUnlocalizedName(nameDB)
                         .setCreativeTab(CreativeTabs.tabCombat)
                         .setNoRepair();
+
         // ▼2.アイテムの登録
         GameRegistry.registerItem(itemDB, nameDB);
+        GameRegistry.registerItem(itemMeridama, nameMeridama);
         // ▼3.テクスチャ・モデル指定JSONファイル名の登録
         proxy.registerModels();
 
@@ -65,6 +88,7 @@ public class DB
 
         //■エンティティ登録
         EntityRegistry.registerModEntity(EntityDBExplode.class, "DBExplode", 1, this, 64, 10, false);
+        EntityRegistry.registerModEntity(       EntityDB.class,        "DB", 2, this, 64, 10, false);
 
         //■パケット登録
         PacketHandler.init();
@@ -84,5 +108,13 @@ public class DB
 
         //■Render登録
         proxy.registerRenders();
+
+        //■レシピ
+        ItemStack stack = new ItemStack(itemDB, 1, 0);
+        stack.addEnchantment(encBoD, encBoD.getMinLevel());
+        GameRegistry.addShapelessRecipe(stack,
+                Items.iron_sword,
+                itemMeridama
+        );
     }
 }

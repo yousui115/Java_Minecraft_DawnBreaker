@@ -102,7 +102,7 @@ public class EntityDBExplode extends EntityWeatherEffect
         };
 
         //■当たり判定補正
-        if(!worldObj.isRemote)
+        //if(!worldObj.isRemote)
         {
             checkHitMagic();
         }
@@ -147,21 +147,24 @@ public class EntityDBExplode extends EntityWeatherEffect
             //■ダメージ判定を受けないEntityは吹き飛ぶ
             if (target.canBeCollidedWith() == false)
             {
-                //TODO うまく飛んでねー！
                 // ▼ベクトル
-                double d1 = target.posX - this.posX;
-                double d3 = target.posY - this.posY;
-                double d5 = target.posZ - this.posZ;
+                double vecX = target.posX - this.posX;
+                double vecY = target.posY - this.posY;
+                double vecZ = target.posZ - this.posZ;
                 // ▼距離
-                double d7 = (double)MathHelper.sqrt_double(d1 * d1 + d3 * d3 + d5 * d5);
+                double dist = (double)MathHelper.sqrt_double(vecX * vecX + vecY * vecY + vecZ * vecZ);
                 // ▼補正
-                double d9 = 0.1D;
-                target.motionX = d1 * d9;
-                target.motionY = d3 * d9 + (double)MathHelper.sqrt_double(d7) * 0.08D;
-                target.motionZ = d5 * d9;
+                double ofst = (7d - dist) * 0.1d;
+                // ▼吹っ飛ぶ
+                target.motionX = vecX * ofst;
+                target.motionY = 0.5d;
+                target.motionZ = vecZ * ofst;
 
                 continue;
             }
+
+            //■ここより下はサーバ側だけでよい。
+            if (this.worldObj.isRemote) { continue; }
 
             //■ファイヤーボール＆投擲物を消し去る
             if (target instanceof EntityFireball ||
@@ -174,32 +177,31 @@ public class EntityDBExplode extends EntityWeatherEffect
             //■生物はUndeadにのみ作用
             if (Util_DB.isUndead(target))
             {
-                //■追加MOBなどがEntity継承でアンデッドを作成してる可能性を考慮
+                //■追加MOBがEntityLivingを継承してない場合は、個別対応が必要。超麺包
                 if (!(target instanceof EntityLiving)) { continue; }
 
                 EntityLiving living = (EntityLiving)target;
 
-                //TODO AI植え付け
-                System.out.println("new AI !");
-
                 boolean isEscape = false;
-                List<EntityAITasks.EntityAITaskEntry> list_entry = living.tasks.taskEntries;
-                for (EntityAITasks.EntityAITaskEntry entry : list_entry)
+                for (EntityAITasks.EntityAITaskEntry entry : living.tasks.taskEntries)
                 {
                     //■調教済み
-                    if (entry.action instanceof EntityAIAvoidPlayer) { isEscape = true; }
+                    if (entry.action instanceof EntityAIAvoidPlayer) { isEscape = true; break; }
                 }
 
                 if (!isEscape)
                 {
                     //■調教
+                    //  TODO スケさんが射撃体勢に入ってると逃げない。
+                    //       リフレクション使ってtargetTasksを掃除しないといけないかも。
                     living.tasks.addTask(0, this.createAIAvoidPlayer(living));
                     living.targetTasks.addTask(0, this.createAIAvoidPlayer(living));
 
                     //■DWに記録
                     Util_DB.setAvoid(living);
 
-                    PacketHandler.INSTANCE.sendToAll(new MessageDW_BoD(living, Util_DB.getID_DW_BoD(), Util_DB.MASK_DW_DB_AVOID));
+                    //■Server -> Client
+                    PacketHandler.INSTANCE.sendToAll(new MessageDW_BoD(living, Util_DB.getID_DW_BoD(), Util_DB.getDW_DB_Flag(living)));
 
                 }
             }

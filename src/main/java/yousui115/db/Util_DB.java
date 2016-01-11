@@ -42,17 +42,17 @@ public class Util_DB
 
     public static final int MASK_DW_DB_AVOID = 0x01;
     public static final int MASK_DW_DB_UEC   = 0x02;
-    private static boolean getDW_DB_Flag(Entity target, int mask)
+    public static int getDW_DB_Flag(Entity target)
     {
-        boolean flag = false;
+        int n = 0;
         try
         {
-            int n = target.getDataWatcher().getWatchableObjectInt(id_dw_BoD);
-            flag = (n & mask) > 0;
+            n = target.getDataWatcher().getWatchableObjectInt(id_dw_BoD);
         }
         catch (Throwable e) {}
-        return flag;
+        return n;
     }
+    private static boolean getDW_DB_Flag(Entity target, int mask) { return (getDW_DB_Flag(target) & mask) == mask; }
     public static boolean hasExplodeChance(Entity target) { return getDW_DB_Flag(target, MASK_DW_DB_UEC); }
     public static boolean isAvoid(Entity target) { return getDW_DB_Flag(target, MASK_DW_DB_AVOID); }
 

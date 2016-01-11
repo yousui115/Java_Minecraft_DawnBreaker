@@ -2,8 +2,8 @@ package yousui115.db.event;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -15,15 +15,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import yousui115.db.DB;
 import yousui115.db.Util_DB;
 import yousui115.db.common.ExtendedPlayerProperties;
 import yousui115.db.entity.EntityDBExplode;
 import yousui115.db.network.MessageMagic;
+import yousui115.db.network.MessagePlayerProperties;
 import yousui115.db.network.PacketHandler;
 
 public class EventHooks
 {
-
     /**
      * ■倒したUndeadの数を記録する(Server)
      * @param event
@@ -40,10 +41,10 @@ public class EventHooks
         //■そのEntityはUndeadである
         if (player != null && Util_DB.isUndead(event.entityLiving))
         {
-            //TODO
-            System.out.println("countKill_Undead");
-
             ExtendedPlayerProperties.get(player).addCountKill_Undead();
+
+            //TODO 1Tickで100体倒したりするとえらい事になりそう。
+            PacketHandler.INSTANCE.sendTo(new MessagePlayerProperties(player), (EntityPlayerMP)player);
         }
     }
 
@@ -94,11 +95,9 @@ public class EventHooks
             }
         }
 
-//        if (letsExplode && Util_DB.rnd.nextBoolean())
-        if (letsExplode)
+        //■x割の確立で爆発
+        if (letsExplode && Util_DB.rnd.nextFloat() > 0.3f)
         {
-            //TODO
-            System.out.println("dooooooon!!");
             EntityDBExplode explode = new EntityDBExplode(event.entity.worldObj, event.entityLiving);
             event.entity.worldObj.addWeatherEffect(explode);
 
@@ -123,7 +122,7 @@ public class EventHooks
         //■そのプレイヤーはX体のアンデットを倒している！素敵！メリ玉あげちゃう！
         if (player != null &&
             Util_DB.isUndead(event.entityLiving) &&
-            ExtendedPlayerProperties.get(player).getCountKill_Undead() % 10 == 1)
+            ExtendedPlayerProperties.get(player).getCountKill_Undead() % 100 == 10)
         {
             World world = event.entityLiving.worldObj;
             double posY = MathHelper.clamp_double(event.entityLiving.posY, 0d, 255d);   //奈落・天上対策
@@ -138,7 +137,7 @@ public class EventHooks
             //■メリ玉をそっと置いていく
             if (inv != null && inv instanceof TileEntityChest)
             {
-                ((TileEntityChest)inv).setInventorySlotContents(13, new ItemStack(Items.golden_apple, 1));
+                ((TileEntityChest)inv).setInventorySlotContents(13, new ItemStack(DB.itemMeridama, 1));
             }
         }
     }

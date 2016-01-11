@@ -2,16 +2,22 @@ package yousui115.db.item;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import yousui115.db.DB;
 import yousui115.db.Util_DB;
+import yousui115.db.common.ExtendedPlayerProperties;
+import yousui115.db.entity.EntityDB;
 
 public class ItemDB extends ItemSword
 {
@@ -25,8 +31,33 @@ public class ItemDB extends ItemSword
     @Override
     public int getColorFromItemStack(ItemStack stack, int renderPass)
     {
+        //TODO 220fは何を指しているのか要調査
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 220f, 220f);
         return 16777215;
     }
+
+    /**
+     * ■
+     */
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+    {
+        int n = ExtendedPlayerProperties.get(playerIn).getCountKill_Undead();
+        tooltip.add("Undead Kill : " + n);
+    }
+
+    /**
+     * ■エンチャントエフェクト
+     */
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean hasEffect(ItemStack stack)
+    {
+        //return false;
+        return super.hasEffect(stack);
+    }
+
 
     /**
      * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
@@ -56,6 +87,39 @@ public class ItemDB extends ItemSword
     public net.minecraft.client.resources.model.ModelResourceLocation getModel(ItemStack stack, EntityPlayer player, int useRemaining)
     {
         return null;
+    }
+
+    /**
+     * ■EntityItemではなく、独自のEntityにしてドロップ(したい:true したくない:false)
+     */
+    @Override
+    public boolean hasCustomEntity(ItemStack stack)
+    {
+        return true;
+    }
+
+    /**
+     * ■独自のEntityを返す
+     *  @param location 本来出現するはずのEntityItem
+     *  @param itemstack EntityItemに内包されている、このItemIDのItemStack
+     */
+    @Override
+    public Entity createEntity(World world, Entity location, ItemStack itemstack)
+    {
+        short mode = 1;
+        BlockPos pos = new BlockPos(location.posX, location.posY - 1, location.posZ);
+//        if (location.worldObj.getBlockState(pos).getBlock().equals(Blocks.air))
+//        {
+//            //■足場が無い
+//            mode = 1;
+//        }
+        EntityDB sword = new EntityDB(location.worldObj, pos, location.rotationYaw, mode);
+        sword.setEntityItemStack(itemstack);
+//        event.entityPlayer.worldObj.spawnEntityInWorld(sword);
+//        //entityItem.setDead();
+//        entityItem.func_174870_v();
+
+        return sword;
     }
 
 }

@@ -82,11 +82,14 @@ public class EnchantBoD extends EnchantmentDamage
     @Override
     public void onEntityDamaged(EntityLivingBase userIn, Entity targetIn, int levelIn)
     {
-        //■用事があるのは、Undeadのみ！
-        if (!Util_DB.isUndead(targetIn)) { return; }
+        //■無条件で火属性ダメージ(短)
+        targetIn.setFire(4);
 
-        //■爆発する権利を与える(拒否は出来ない)
-        Util_DB.setExplodeChance(targetIn);
+        //■Undeadには、爆発する権利を与えてやろう(拒否権は無い)
+        if (Util_DB.isUndead(targetIn))
+        {
+            Util_DB.setExplodeChance(targetIn);
+        }
     }
 
 }

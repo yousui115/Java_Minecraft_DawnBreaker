@@ -23,8 +23,10 @@ import yousui115.db.DB;
 import yousui115.db.client.render.LayerPigZombie;
 import yousui115.db.client.render.LayerSkeleton;
 import yousui115.db.client.render.LayerZombie;
+import yousui115.db.client.render.RenderDB;
 import yousui115.db.client.render.RenderDBExplode;
 import yousui115.db.common.CommonProxy;
+import yousui115.db.entity.EntityDB;
 import yousui115.db.entity.EntityDBExplode;
 
 public class ClientProxy extends CommonProxy
@@ -35,6 +37,7 @@ public class ClientProxy extends CommonProxy
     public void registerRenders()
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityDBExplode.class, new RenderDBExplode(getRenderManager()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityDB.class, new RenderDB(getRenderManager(), getRenderItem()));
 
         //■ゾンビー
         RenderZombie zombie = (RenderZombie)getRenderManager().entityRenderMap.get(EntityZombie.class);
@@ -56,7 +59,8 @@ public class ClientProxy extends CommonProxy
     @Override
     public void registerModels()
     {
-        ModelLoader.setCustomModelResourceLocation(DB.itemDB, 0, new ModelResourceLocation(DB.MOD_ID + ":" + DB.nameDB, "inventory"));
+        ModelLoader.setCustomModelResourceLocation(DB.itemDB,       0, new ModelResourceLocation(DB.MOD_ID + ":" + DB.nameDB,       "inventory"));
+        ModelLoader.setCustomModelResourceLocation(DB.itemMeridama, 0, new ModelResourceLocation(DB.MOD_ID + ":" + DB.nameMeridama, "inventory"));
     }
 
     /**
