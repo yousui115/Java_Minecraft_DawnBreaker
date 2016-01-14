@@ -100,7 +100,7 @@ public class EntityDB extends Entity
             {
                 //■悲しいお知らせ
                 String s = stack.getItem().getItemStackDisplayName(stack);
-                DB.proxy.getEntityPlayerInstance().addChatMessage(new ChatComponentText(s + " was extinguished."));
+                DB.proxy.getEntityPlayerInstance().addChatMessage(new ChatComponentText(s + " was lost."));
             }
         }
 

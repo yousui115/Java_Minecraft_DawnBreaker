@@ -3,6 +3,7 @@ package yousui115.db.common;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
@@ -13,8 +14,10 @@ public class ExtendedPlayerProperties implements IExtendedEntityProperties
      public final static String EXT_PROP_NAME = "UndeadKillData";
 
      private final static String KEY_CK_U = "countKill_Undead";
-
      private int countUndeadKill = 0;
+
+     private final static String KEY_RA = "countRepairAnvil";
+     private int countRepairAnvil = 0;
 
      /*EntityPlayerにIExtendedEntityPropertiesを登録。登録文字列はMOD固有のものを割り当てること*/
      public static void register(EntityPlayer player)
@@ -33,7 +36,10 @@ public class ExtendedPlayerProperties implements IExtendedEntityProperties
      public void saveNBTData(NBTTagCompound compound)
      {
          NBTTagCompound nbt = new NBTTagCompound();
+
+         //■
          nbt.setInteger(KEY_CK_U, this.countUndeadKill);
+         nbt.setInteger(KEY_RA, this.countRepairAnvil);
 
          compound.setTag(EXT_PROP_NAME, nbt);
      }
@@ -42,8 +48,9 @@ public class ExtendedPlayerProperties implements IExtendedEntityProperties
      public void loadNBTData(NBTTagCompound compound)
      {
          NBTTagCompound nbt = (NBTTagCompound)compound.getTag(EXT_PROP_NAME);
-         this.countUndeadKill = nbt.getInteger(KEY_CK_U);
 
+         this.countUndeadKill = nbt.getInteger(KEY_CK_U);
+         this.countRepairAnvil = nbt.getInteger(KEY_RA);
      }
 
      /*初期化メソッド。今のところ使う必要はない。*/
@@ -55,24 +62,32 @@ public class ExtendedPlayerProperties implements IExtendedEntityProperties
      * ExtendedPlayerProperties.get(playerインスタンス).setSampleInt(sample)
      * と呼び出す。*/
 
-     public int getCountKill_Undead()
-     {
-         return countUndeadKill;
-     }
-
-     private void setCountKill_Undead(int count)
-     {
-         if (count < 0) { count = 0; }
-         this.countUndeadKill = count;
-     }
-
+     /**
+      *
+      * @return
+      */
+     public int getCountKill_Undead() { return this.countUndeadKill; }
+     private void setCountKill_Undead(int count) { this.countUndeadKill = count; }
      public void addCountKill_Undead()
      {
-         int exp = 1;
-         int limit = (Integer.MAX_VALUE - 1) - getCountKill_Undead();
-         int count = getCountKill_Undead() + (limit > exp ? exp : limit);   //上限あふれ防止
-         setCountKill_Undead(count);
+         setCountKill_Undead( this.addCount(1, Integer.MAX_VALUE - 1, getCountKill_Undead(), true) );
      }
 
+     /**
+      *
+      * @return
+      */
+     public int getCountRepairAnvil() { return countRepairAnvil; }
+     private void setCountRepairAnvil(int count) { this.countRepairAnvil = count; }
+     public void addCountRepairAnvil()
+     {
+         setCountRepairAnvil( this.addCount(1, Integer.MAX_VALUE - 1, getCountRepairAnvil(), true) );
+     }
 
+     //■桁あふれ防止
+     private int addCount(int exp, int limit, int count, boolean isPositive)
+     {
+         int num = count + (limit - count > exp ? exp : limit - count);
+         return isPositive ? MathHelper.clamp_int(num, 0, limit) : num;
+     }
 }

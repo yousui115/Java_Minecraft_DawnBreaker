@@ -12,13 +12,16 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import yousui115.db.DB;
 import yousui115.db.Util_DB;
 import yousui115.db.common.ExtendedPlayerProperties;
 import yousui115.db.entity.EntityDBExplode;
+import yousui115.db.item.ItemDB;
 import yousui115.db.network.MessageMagic;
 import yousui115.db.network.MessagePlayerProperties;
 import yousui115.db.network.PacketHandler;
@@ -139,6 +142,54 @@ public class EventHooks
             {
                 ((TileEntityChest)inv).setInventorySlotContents(13, new ItemStack(DB.itemMeridama, 1));
             }
+        }
+    }
+
+    /**
+     * ■金床コンテナ情報(入力スロット1or2(もしくは両方)にputして、outputはまだpickupしてない)
+     * @param event
+     */
+    @SubscribeEvent
+    public void onAnvilChange(AnvilUpdateEvent event)
+    {
+        //■left:DB(ダメージ有り)  +  right:meridama ならば処理する
+        if (event.left != null &&
+            event.left.getItem() instanceof ItemDB &&
+            event.left.getItemDamage() != 0 &&
+            event.right != null &&
+            event.right.getItem().equals(DB.itemMeridama))
+        {
+            //■修理コストは常に1(メリディアの恩恵)
+            event.cost = 1;
+            event.materialCost = 1;
+
+            //■修理量は最大値まで。(メリディアの恩恵)
+            event.output = event.left.copy();
+            event.output.setItemDamage(0);
+        }
+    }
+
+    /**
+     * ■金床コンテナ情報(output をスロットから pickup した)
+     * @param event
+     */
+    @SubscribeEvent
+    public void onAnvilRepair(AnvilRepairEvent event)
+    {
+        //TODO ※注意！(Forge1671)
+        // left   に right
+        // right  に output
+        // output に left
+        // が入っちゃってる！
+
+        //■left:DB(ダメージ有り)  +  right:meridama ならば処理する
+        if (event.output != null &&
+            event.output.getItem() instanceof ItemDB &&
+            event.output.getItemDamage() != 0 &&
+            event.left != null &&
+            event.left.getItem().equals(DB.itemMeridama))
+        {
+            ExtendedPlayerProperties.get(event.entityPlayer).addCountRepairAnvil();
         }
     }
 

@@ -5,10 +5,15 @@ import net.minecraft.enchantment.EnchantmentDamage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import yousui115.db.Util_DB;
+import yousui115.db.common.ExtendedPlayerProperties;
 
 public class EnchantBoD extends EnchantmentDamage
 {
@@ -57,6 +62,15 @@ public class EnchantBoD extends EnchantmentDamage
     public String getName() { return "enchantment.damage." + this.name; }
 
     /**
+     * ■Returns the correct traslated name of the enchantment and the level in roman numbers.
+     */
+    public String getTranslatedName(int level)
+    {
+        return EnumChatFormatting.YELLOW + StatCollector.translateToLocal(this.getName());
+
+    }
+
+    /**
      * ■渡されたエンチャントと共存出来るか否か
      */
     @Override
@@ -85,10 +99,17 @@ public class EnchantBoD extends EnchantmentDamage
         //■無条件で火属性ダメージ(短)
         targetIn.setFire(4);
 
-        //■Undeadには、爆発する権利を与えてやろう(拒否権は無い)
         if (Util_DB.isUndead(targetIn))
         {
+            //■Undeadには、爆発する権利を与えてやろう(拒否権は無い)
             Util_DB.setExplodeChance(targetIn);
+
+            //■修理回数による、Undeadへのダメージ補正
+            if (userIn instanceof EntityPlayer)
+            {
+                int count = ExtendedPlayerProperties.get((EntityPlayer)userIn).getCountRepairAnvil();
+                targetIn.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer)userIn), 0.5f * count);
+            }
         }
     }
 
