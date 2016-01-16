@@ -47,3 +47,7 @@ https://www.dropbox.com/s/y490if6tos35mwl/DB_v2_M189_F1671.jar?dl=0
 ##■謝辞
 さまざまなMinecraft Mod Open Sourceから技術を拝借しております。  
 この場を借りてお詫び申し上げます。
+
+##■さいごに
+Open Sourceです。  
+揚げるなり炒めるなりご自由にどうぞ。
