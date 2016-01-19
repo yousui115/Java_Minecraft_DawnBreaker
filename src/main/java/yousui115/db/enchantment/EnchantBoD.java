@@ -108,6 +108,7 @@ public class EnchantBoD extends EnchantmentDamage
             if (userIn instanceof EntityPlayer)
             {
                 int count = ExtendedPlayerProperties.get((EntityPlayer)userIn).getCountRepairAnvil();
+                targetIn.hurtResistantTime = 0;
                 targetIn.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer)userIn), 0.5f * count);
             }
         }
