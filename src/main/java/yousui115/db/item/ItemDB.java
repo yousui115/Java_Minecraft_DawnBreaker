@@ -2,7 +2,6 @@ package yousui115.db.item;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -10,13 +9,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import yousui115.db.DB;
 import yousui115.db.Util_DB;
-import yousui115.db.common.ExtendedPlayerProperties;
 import yousui115.db.entity.EntityDB;
 
 public class ItemDB extends ItemSword
@@ -27,14 +25,14 @@ public class ItemDB extends ItemSword
         super(material);
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public int getColorFromItemStack(ItemStack stack, int renderPass)
-    {
-        //TODO 220fは何を指しているのか要調査
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 220f, 220f);
-        return 16777215;
-    }
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    public int getColorFromItemStack(ItemStack stack, int renderPass)
+//    {
+//        //TODO 220fは何を指しているのか要調査
+//        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 220f, 220f);
+//        return 16777215;
+//    }
 
     /**
      * ■
@@ -43,12 +41,14 @@ public class ItemDB extends ItemSword
     @Override
     public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
     {
-        int n = ExtendedPlayerProperties.get(playerIn).getCountKill_Undead();
+        //int n = ExtendedPlayerProperties.get(playerIn).getCountKill_Undead();
+        int n = Util_DB.getCountKill_Undead(playerIn);
         tooltip.add("Undead Kill : " + n);
 
         if (advanced)
         {
-            int i = ExtendedPlayerProperties.get(playerIn).getCountRepairAnvil();
+            //int i = ExtendedPlayerProperties.get(playerIn).getCountRepairAnvil();
+            int i = Util_DB.getCountRepairAnvil(playerIn);
             tooltip.add("Repair Count : " + i);
         }
     }
@@ -72,7 +72,7 @@ public class ItemDB extends ItemSword
     public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
     {
         ItemStack stack = new ItemStack(itemIn, 1, 0);
-        Enchantment enc = Enchantment.getEnchantmentById(Util_DB.getID_Enc_BoD());
+        Enchantment enc = Enchantment.getEnchantmentByID(Util_DB.getID_Enc_BoD());
         if (enc != null && enc == DB.encBoD) { stack.addEnchantment(enc, enc.getMinLevel()); }
 
         subItems.add(stack);
@@ -88,12 +88,12 @@ public class ItemDB extends ItemSword
      * @param useRemaining The ticks remaining for the active item.
      * @return Null to use default model, or a custom ModelResourceLocation for the stage of use.
      */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public net.minecraft.client.resources.model.ModelResourceLocation getModel(ItemStack stack, EntityPlayer player, int useRemaining)
-    {
-        return null;
-    }
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    public net.minecraft.client.resources.model.ModelResourceLocation getModel(ItemStack stack, EntityPlayer player, int useRemaining)
+//    {
+//        return null;
+//    }
 
     /**
      * ■EntityItemではなく、独自のEntityにしてドロップ(したい:true したくない:false)

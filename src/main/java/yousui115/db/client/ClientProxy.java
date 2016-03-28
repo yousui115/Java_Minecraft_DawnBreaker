@@ -3,19 +3,20 @@ package yousui115.db.client;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPigZombie;
 import net.minecraft.client.renderer.entity.RenderSkeleton;
 import net.minecraft.client.renderer.entity.RenderZombie;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -41,18 +42,25 @@ public class ClientProxy extends CommonProxy
 
         //■ゾンビー
         RenderZombie zombie = (RenderZombie)getRenderManager().entityRenderMap.get(EntityZombie.class);
-        List<LayerRenderer<EntityZombie>> ooo = ObfuscationReflectionHelper.getPrivateValue(RenderZombie.class, zombie, 4);
+//        List<LayerRenderer<EntityZombie>> ooo = ObfuscationReflectionHelper.getPrivateValue(RenderZombie.class, zombie, 4);
+        List<LayerRenderer<EntityZombie>> ooo = ObfuscationReflectionHelper.getPrivateValue(RenderZombie.class, zombie, 9);
         ooo.add(new LayerZombie(zombie));
-        List<LayerRenderer<EntityZombie>> ppp = ObfuscationReflectionHelper.getPrivateValue(RenderZombie.class, zombie, 5);
+//        List<LayerRenderer<EntityZombie>> ppp = ObfuscationReflectionHelper.getPrivateValue(RenderZombie.class, zombie, 5);
+        List<LayerRenderer<EntityZombie>> ppp = ObfuscationReflectionHelper.getPrivateValue(RenderZombie.class, zombie, 10);
         ppp.add(new LayerZombie(zombie));
 
         //■スケルトーン
         RenderSkeleton skeleton = (RenderSkeleton)getRenderManager().entityRenderMap.get(EntitySkeleton.class);
-        skeleton.addLayer(new LayerSkeleton(skeleton));
+//        skeleton.addLayer(new LayerSkeleton(skeleton));
+        List<LayerRenderer<EntitySkeleton>> ske = ObfuscationReflectionHelper.getPrivateValue(RenderLivingBase.class, skeleton, 4);
+        ske.add(new LayerSkeleton(skeleton));
+
 
         //■腐豚
         RenderPigZombie pz = (RenderPigZombie)getRenderManager().entityRenderMap.get(EntityPigZombie.class);
-        pz.addLayer(new LayerPigZombie(pz));
+//        pz.addLayer(new LayerPigZombie(pz));
+        List<LayerRenderer<EntityPigZombie>> pigz = ObfuscationReflectionHelper.getPrivateValue(RenderLivingBase.class, pz, 4);
+        pigz.add(new LayerPigZombie(pz));
 
     }
 

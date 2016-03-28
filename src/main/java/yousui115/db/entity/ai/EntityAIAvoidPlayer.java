@@ -10,9 +10,9 @@ import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathNavigate;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -82,10 +82,10 @@ public class EntityAIAvoidPlayer extends EntityAIBase
             this.closestLivingEntity = (Entity)list.get(0);
 
             //■敵性Entityの立ち位置
-            Vec3 vec = new Vec3(this.closestLivingEntity.posX, this.closestLivingEntity.posY, this.closestLivingEntity.posZ);
+            Vec3d vec = new Vec3d(this.closestLivingEntity.posX, this.closestLivingEntity.posY, this.closestLivingEntity.posZ);
 
             //■逃走先の選出
-            Vec3 vec3 = null;
+            Vec3d vec3 = null;
             if (this.theEntity instanceof EntityCreature)
             {
                 vec3 = RandomPositionGenerator.findRandomTargetBlockAwayFrom((EntityCreature)this.theEntity, 16, 7, vec);
@@ -167,9 +167,9 @@ public class EntityAIAvoidPlayer extends EntityAIBase
      * @param p_75461_3_
      * @return
      */
-    public static Vec3 findRandomTargetBlockAwayFrom(EntityLiving p_75461_0_, int p_75461_1_, int p_75461_2_, Vec3 p_75461_3_)
+    public static Vec3d findRandomTargetBlockAwayFrom(EntityLiving p_75461_0_, int p_75461_1_, int p_75461_2_, Vec3d p_75461_3_)
     {
-        Vec3 staticVector = (new Vec3(p_75461_0_.posX, p_75461_0_.posY, p_75461_0_.posZ)).subtract(p_75461_3_);
+        Vec3d staticVector = (new Vec3d(p_75461_0_.posX, p_75461_0_.posY, p_75461_0_.posZ)).subtract(p_75461_3_);
         /**
          * searches 10 blocks at random in a within par1(x,z) and par2 (y) distance, ignores those not in the direction
          * of par3Vec3, then points to the tile for which creature.getBlockPathWeight returns the highest number
@@ -182,7 +182,7 @@ public class EntityAIAvoidPlayer extends EntityAIBase
      * searches 10 blocks at random in a within par1(x,z) and par2 (y) distance, ignores those not in the direction of
      * par3Vec3, then points to the tile for which creature.getBlockPathWeight returns the highest number
      */
-    private static Vec3 findRandomTargetBlock(EntityLiving p_75462_0_, int p_75462_1_, int p_75462_2_, Vec3 p_75462_3_)
+    private static Vec3d findRandomTargetBlock(EntityLiving p_75462_0_, int p_75462_1_, int p_75462_2_, Vec3d p_75462_3_)
     {
         Random random = p_75462_0_.getRNG();
         boolean flag = false;
@@ -257,7 +257,7 @@ public class EntityAIAvoidPlayer extends EntityAIBase
 
         if (flag)
         {
-            return new Vec3((double)k, (double)l, (double)i1);
+            return new Vec3d((double)k, (double)l, (double)i1);
         }
         else
         {

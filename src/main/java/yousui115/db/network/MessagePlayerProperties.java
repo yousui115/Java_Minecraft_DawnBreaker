@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import yousui115.db.common.ExtendedPlayerProperties;
+import yousui115.db.Util_DB;
 
 public class MessagePlayerProperties implements IMessage
 {
@@ -13,10 +13,13 @@ public class MessagePlayerProperties implements IMessage
 
     public MessagePlayerProperties(){}
 
-    public MessagePlayerProperties(EntityPlayer entityPlayer) {
+    public MessagePlayerProperties(EntityPlayer entityPlayer)
+    {
         this.data = new NBTTagCompound();
         //EntityPlayerからIExtendedEntityPropertiesを取得。
-        ExtendedPlayerProperties.get(entityPlayer).saveNBTData(data);
+//        ExtendedPlayerProperties.get(entityPlayer).saveNBTData(data);
+        Util_DB.getNBTData(entityPlayer, data);
+
     }
 
     @Override

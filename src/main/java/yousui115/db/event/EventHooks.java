@@ -8,18 +8,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AnvilUpdateEvent;
+import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import yousui115.db.DB;
 import yousui115.db.Util_DB;
-import yousui115.db.common.ExtendedPlayerProperties;
 import yousui115.db.entity.EntityDBExplode;
 import yousui115.db.item.ItemDB;
 import yousui115.db.network.MessageMagic;
@@ -36,15 +36,16 @@ public class EventHooks
     public void countKill_Undead(LivingDeathEvent event)
     {
         //■サーバのみ(まぁ、DSからPlayer取れるのはサーバだけなんだけどね)
-        if (event.entity.worldObj.isRemote) { return; }
+        if (event.getEntity().worldObj.isRemote) { return; }
 
         //■Entityを倒したのはプレイヤー
-        EntityPlayer player = getPlayerFromDS(event.source);
+        EntityPlayer player = getPlayerFromDS(event.getSource());
 
         //■そのEntityはUndeadである
-        if (player != null && Util_DB.isUndead(event.entityLiving))
+        if (player != null && Util_DB.isUndead(event.getEntityLiving()))
         {
-            ExtendedPlayerProperties.get(player).addCountKill_Undead();
+            //ExtendedPlayerProperties.get(player).addCountKill_Undead();
+            Util_DB.addCountKill_Undead(player, 1);
 
             //TODO 1Tickで100体倒したりするとえらい事になりそう。
             PacketHandler.INSTANCE.sendTo(new MessagePlayerProperties(player), (EntityPlayerMP)player);
@@ -59,26 +60,26 @@ public class EventHooks
     public void explodeUndead(LivingDeathEvent event)
     {
         //■サーバのみ(まぁ、DSからPlayer取れるのはサーバだけなんだけどね)
-        if (event.entity.worldObj.isRemote) { return; }
+        if (event.getEntity().worldObj.isRemote) { return; }
 
         //■生物がトドメを刺さないといけない
-        if (event.source.getEntity() == null ||
-            !(event.source.getEntity() instanceof EntityLivingBase))
+        if (event.getSource().getEntity() == null ||
+            !(event.getSource().getEntity() instanceof EntityLivingBase))
         { return; }
 
         boolean letsExplode = false;
 
         //if (canExplode(event.entityLiving))
-        if (Util_DB.hasExplodeChance(event.entityLiving))
+        if (Util_DB.hasExplodeChance(event.getEntityLiving()))
         {
             letsExplode = true;
         }
-        else if (Util_DB.isUndead(event.entityLiving))
+        else if (Util_DB.isUndead(event.getEntityLiving()))
         {
             //■一撃でヤれちゃうと爆発しないので、ここで補正
 
             // ▼1.プレイヤーである(フォロワーとかは無視)
-            EntityPlayer player = getPlayerFromDS(event.source);
+            EntityPlayer player = getPlayerFromDS(event.getSource());
             if (player == null) { return; }
             // ▼2.アイテムを持っている
             ItemStack stack = player.inventory.getCurrentItem();
@@ -101,8 +102,8 @@ public class EventHooks
         //■x割の確立で爆発
         if (letsExplode && Util_DB.rnd.nextFloat() > 0.3f)
         {
-            EntityDBExplode explode = new EntityDBExplode(event.entity.worldObj, event.entityLiving);
-            event.entity.worldObj.addWeatherEffect(explode);
+            EntityDBExplode explode = new EntityDBExplode(event.getEntity().worldObj, event.getEntityLiving());
+            event.getEntity().worldObj.addWeatherEffect(explode);
 
             //■Server -> Client
             PacketHandler.INSTANCE.sendToAll(new MessageMagic(explode));
@@ -117,19 +118,20 @@ public class EventHooks
     public void presentFromMeridia(LivingDropsEvent event)
     {
         //■サーバのみ
-        if (event.entity.worldObj.isRemote) { return; }
+        if (event.getEntity().worldObj.isRemote) { return; }
 
         //■Entityを倒したのはプレイヤー
-        EntityPlayer player = getPlayerFromDS(event.source);
+        EntityPlayer player = getPlayerFromDS(event.getSource());
 
         //■そのプレイヤーはX体のアンデットを倒している！素敵！メリ玉あげちゃう！
         if (player != null &&
-            Util_DB.isUndead(event.entityLiving) &&
-            ExtendedPlayerProperties.get(player).getCountKill_Undead() % 100 == 10)
+            Util_DB.isUndead(event.getEntityLiving()) &&
+            //ExtendedPlayerProperties.get(player).getCountKill_Undead() % 100 == 10)
+            Util_DB.getCountKill_Undead(player) % 100 == 10)
         {
-            World world = event.entityLiving.worldObj;
-            double posY = MathHelper.clamp_double(event.entityLiving.posY, 0d, 255d);   //奈落・天上対策
-            BlockPos bp = new BlockPos(event.entityLiving.posX, posY, event.entityLiving.posZ);
+            World world = event.getEntityLiving().worldObj;
+            double posY = MathHelper.clamp_double(event.getEntityLiving().posY, 0d, 255d);   //奈落・天上対策
+            BlockPos bp = new BlockPos(event.getEntityLiving().posX, posY, event.getEntityLiving().posZ);
 
             //■謙虚なチェスト生成(容赦ない設置)
             world.setBlockState(bp, Blocks.chest.getDefaultState());
@@ -153,19 +155,19 @@ public class EventHooks
     public void onAnvilChange(AnvilUpdateEvent event)
     {
         //■left:DB(ダメージ有り)  +  right:meridama ならば処理する
-        if (event.left != null &&
-            event.left.getItem() instanceof ItemDB &&
-            event.left.getItemDamage() != 0 &&
-            event.right != null &&
-            event.right.getItem().equals(DB.itemMeridama))
+        if (event.getLeft() != null &&
+            event.getLeft().getItem() instanceof ItemDB &&
+            event.getLeft().getItemDamage() != 0 &&
+            event.getRight() != null &&
+            event.getRight().getItem().equals(DB.itemMeridama))
         {
             //■修理コストは常に1(メリディアの恩恵)
-            event.cost = 1;
-            event.materialCost = 1;
+            event.setCost(1);
+            event.setMaterialCost(1);
 
             //■修理量は最大値まで。(メリディアの恩恵)
-            event.output = event.left.copy();
-            event.output.setItemDamage(0);
+            event.setOutput(event.getLeft().copy());
+            event.getOutput().setItemDamage(0);
         }
     }
 
@@ -183,16 +185,26 @@ public class EventHooks
         // が入っちゃってる！
 
         //■left:DB(ダメージ有り)  +  right:meridama ならば処理する
-        if (event.output != null &&
-            event.output.getItem() instanceof ItemDB &&
-            event.output.getItemDamage() != 0 &&
-            event.left != null &&
-            event.left.getItem().equals(DB.itemMeridama))
+        if (event.getOutput() != null &&
+            event.getOutput().getItem() instanceof ItemDB &&
+            event.getOutput().getItemDamage() != 0 &&
+            event.getLeft() != null &&
+            event.getLeft().getItem().equals(DB.itemMeridama))
         {
-            ExtendedPlayerProperties.get(event.entityPlayer).addCountRepairAnvil();
+            //ExtendedPlayerProperties.get(event.entityPlayer).addCountRepairAnvil();
+            Util_DB.addCountRepairAnvil(event.getEntityPlayer(), 1);
         }
     }
 
+
+    @SubscribeEvent
+    public void onEntityConstructing(EntityConstructing event)
+    {
+        if (event.getEntity() != null)
+        {
+            event.getEntity().getDataManager().register(DB.DP_DB_FLAGS, Byte.valueOf((byte)0));
+        }
+    }
 
     /* =====================================  =========================================== */
 

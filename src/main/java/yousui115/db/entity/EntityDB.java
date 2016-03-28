@@ -4,22 +4,28 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import yousui115.db.DB;
 import yousui115.db.item.ItemDB;
+
+import com.google.common.base.Optional;
 
 public class EntityDB extends Entity
 {
     float fYOffset;
     float fYawOffset;
+
+    public static final DataParameter<Optional<ItemStack>> DB_ITEMSTACK = EntityDataManager.<Optional<ItemStack>>createKey(EntityDB.class, DataSerializers.OPTIONAL_ITEM_STACK);
 
     /**
      * ■コンストラクタ(ロード)
@@ -43,11 +49,11 @@ public class EntityDB extends Entity
         setLocationAndAngles(posIn.getX() + 0.5, posIn.getY() + 1, posIn.getZ() + 0.5, -yawIn, 0);
 
         //■とりあえず、空っぽのItemStackを突っ込んでおく
+        //this.setEntityItemStack(new ItemStack(Blocks.air, 0));
         this.setEntityItemStack(new ItemStack(Blocks.air, 0));
 
         //■
-        this.setEntityMode(modeIn);
-
+        //this.setEntityMode(modeIn);
     }
 
     /**
@@ -60,10 +66,11 @@ public class EntityDB extends Entity
         setSize(0.5F, 0.5F);
 
         //■ItemStack保持用DataWatcher領域の確保(5:ItemStack)
-        this.getDataWatcher().addObjectByDataType(10, 5);
+//        this.getDataWatcher().addObjectByDataType(10, 5);
+        this.getDataManager().register(DB_ITEMSTACK, Optional.<ItemStack>absent());
 
         //■突き刺しモードか浮遊モードか(1:short)
-        this.getDataWatcher().addObjectByDataType(11, 1);
+//        this.getDataWatcher().addObjectByDataType(11, 1);
 
         //■火耐性
         this.isImmuneToFire = true;
@@ -78,8 +85,8 @@ public class EntityDB extends Entity
     public void onUpdate()
     {
         //■死 ぬ が よ い
-        if (this.ridingEntity != null) { this.ridingEntity.setDead(); this.ridingEntity = null; }
-        if (this.riddenByEntity != null) { this.riddenByEntity.setDead(); this.riddenByEntity = null; }
+//        if (this.getRidingEntity() != null) { this.getRidingEntity().setDead(); dismountRidingEntity(); }
+//        if (this.riddenByEntity != null) { this.riddenByEntity.setDead(); this.riddenByEntity = null; }
 
         //■ItemKFSのItemStackを保持してる事があいでんちちー
         ItemStack stack = this.getEntityItemStack();
@@ -100,7 +107,7 @@ public class EntityDB extends Entity
             {
                 //■悲しいお知らせ
                 String s = stack.getItem().getItemStackDisplayName(stack);
-                DB.proxy.getEntityPlayerInstance().addChatMessage(new ChatComponentText(s + " was lost."));
+                //DB.proxy.getEntityPlayerInstance().addChatMessage(new ChatComponentText(s + " was lost."));
             }
         }
 
@@ -140,15 +147,16 @@ public class EntityDB extends Entity
      * ■プレイヤーが右クリックすると呼ばれる
      */
     @Override
-    public boolean interactFirst(EntityPlayer playerIn)
+    public boolean processInitialInteract(EntityPlayer playerIn, ItemStack stackIn, EnumHand handIn)
     {
-        ItemStack currentItem = playerIn.getCurrentEquippedItem();
-        if (currentItem != null) { return false; }
+        //ItemStack currentItem = playerIn.getCurrentEquippedItem();
+        if (stackIn != null) { return false; }
 
         if (!this.worldObj.isRemote)
         {
             //■素手なので、そのままItemStackを突っ込む
-            playerIn.setCurrentItemOrArmor(0, this.getEntityItemStack());
+            //playerIn.setCurrentItemOrArmor(0, this.getEntityItemStack());
+            playerIn.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, this.getEntityItemStack());
             this.setDead();
         }
 
@@ -168,11 +176,12 @@ public class EntityDB extends Entity
         //■ItemStack
         NBTTagCompound tagItem = tagCompund.getCompoundTag(NBTTAG_ITEM);
         this.setEntityItemStack(ItemStack.loadItemStackFromNBT(tagItem));
-        ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
+        //ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
+        ItemStack item = this.getDataManager().get(this.DB_ITEMSTACK).orNull();
         if (item == null || item.stackSize <= 0) this.setDead();
 
         //■Mode
-        this.setEntityMode(tagCompund.getShort(NBTTAG_MODE));
+        //this.setEntityMode(1);
     }
 
     /**
@@ -188,7 +197,7 @@ public class EntityDB extends Entity
         }
 
         //■Mode
-        tagCompound.setShort(NBTTAG_MODE, this.getEntityMode());
+        //tagCompound.setShort(NBTTAG_MODE, this.getEntityMode());
     }
 
     /**
@@ -251,11 +260,11 @@ public class EntityDB extends Entity
     /**
      * ■Gets the name of this command sender (usually username, but possibly "Rcon")
      */
-    @Override
-    public String getName()
-    {
-        return this.hasCustomName() ? this.getCustomNameTag() : StatCollector.translateToLocal("item." + this.getEntityItemStack().getUnlocalizedName());
-    }
+//    @Override
+//    public String getName()
+//    {
+//        return this.hasCustomName() ? this.getCustomNameTag() : StatCollector.translateToLocal("item." + this.getEntityItemStack().getUnlocalizedName());
+//    }
 
     /**
      * ■If returns false, the item will not inflict any damage against entities.
@@ -269,11 +278,11 @@ public class EntityDB extends Entity
     /**
      * ■Teleports the entity to another dimension. Params: Dimension number to teleport to
      */
-    @Override
-    public void travelToDimension(int dimensionId)
-    {
-        //■移動はしない
-    }
+//    @Override
+//    public void travelToDimension(int dimensionId)
+//    {
+//        //■移動はしない
+//    }
     /* ======================================== イカ、自作 =====================================*/
 
     /**
@@ -284,7 +293,8 @@ public class EntityDB extends Entity
      */
     public ItemStack getEntityItemStack()
     {
-        ItemStack itemstack = this.getDataWatcher().getWatchableObjectItemStack(10);
+        //ItemStack itemstack = this.getDataWatcher().getWatchableObjectItemStack(10);
+        ItemStack itemstack = this.getDataManager().get(this.DB_ITEMSTACK).orNull();
 
         return itemstack;
     }
@@ -296,18 +306,23 @@ public class EntityDB extends Entity
      */
     public void setEntityItemStack(ItemStack stack)
     {
-        this.getDataWatcher().updateObject(10, stack);
-        this.getDataWatcher().setObjectWatched(10);
+
+//        this.getDataWatcher().updateObject(10, stack);
+//        this.getDataWatcher().setObjectWatched(10);
+//        this.getDataManager().set(this.DB_ITEMSTACK, Optional.fromNullable(stack));
+        this.getDataManager().set(DB_ITEMSTACK, Optional.fromNullable(stack));
+        this.getDataManager().setDirty(DB_ITEMSTACK);
+
     }
 
-    public short getEntityMode()
-    {
-        return this.getDataWatcher().getWatchableObjectShort(11);
-    }
-
-    public void setEntityMode(short mode)
-    {
-        this.getDataWatcher().updateObject(11, mode);
-        this.getDataWatcher().setObjectWatched(11);
-    }
+//    public short getEntityMode()
+//    {
+//        return this.getDataWatcher().getWatchableObjectShort(11);
+//    }
+//
+//    public void setEntityMode(short mode)
+//    {
+//        this.getDataWatcher().updateObject(11, mode);
+//        this.getDataWatcher().setObjectWatched(11);
+//    }
 }

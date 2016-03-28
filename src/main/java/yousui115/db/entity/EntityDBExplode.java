@@ -10,9 +10,10 @@ import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.effect.EntityWeatherEffect;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import yousui115.db.Util_DB;
 import yousui115.db.entity.ai.EntityAIAvoidPlayer;
@@ -52,12 +53,13 @@ public class EntityDBExplode extends EntityWeatherEffect
         setLocationAndAngles(trigger.posX, trigger.posY + trigger.height/2.0F, trigger.posZ, 0.0F, 0.0F);
 
         //■当たり判定エリアの補正
-        setEntityBoundingBox(AxisAlignedBB.fromBounds(this.posX - this.width  / 2,
-                                                      this.posY - this.height / 2,
-                                                      this.posZ - this.width  / 2,
-                                                      this.posX + this.width  / 2,
-                                                      this.posY + this.height / 2,
-                                                      this.posZ + this.width  / 2));
+//        setEntityBoundingBox(AxisAlignedBB.fromBounds(this.posX - this.width  / 2,
+//                                                      this.posY - this.height / 2,
+//                                                      this.posZ - this.width  / 2,
+//                                                      this.posX + this.width  / 2,
+//                                                      this.posY + this.height / 2,
+//                                                      this.posZ + this.width  / 2));
+        setEntityBoundingBox(this.getEntityBoundingBox().expand(this.width / 2f, this.height / 2f, this.width / 2));
 
         //■爆心Entityは対象外
         hitEntities.add(this.trigger);
@@ -67,8 +69,8 @@ public class EntityDBExplode extends EntityWeatherEffect
     public void onUpdate()
     {
         //■死 ぬ が よ い
-        if (this.ridingEntity != null) { this.ridingEntity.setDead(); this.ridingEntity = null; }
-        if (this.riddenByEntity != null) { this.riddenByEntity.setDead(); this.riddenByEntity = null; }
+//        if (this.getRidingEntity() != null) { this.getRidingEntity().setDead(); this. = null; }
+//        if (this.riddenByEntity != null) { this.riddenByEntity.setDead(); this.riddenByEntity = null; }
 
         //■初回起動時にだけ行いたい処理
         if (this.firstUpdate)
@@ -77,7 +79,8 @@ public class EntityDBExplode extends EntityWeatherEffect
             if (!this.worldObj.isRemote)
             {
                 //TODO いい爆発音のSE探さないとなぁ。
-                trigger.worldObj.playSoundAtEntity(trigger, "random.explode", 4.0f, 0.5f);
+                //trigger.worldObj.playSoundAtEntity(trigger, "random.explode", 4.0f, 0.5f);
+                trigger.worldObj.playSound((EntityPlayer)null, this.posX, this.posY, this.posZ, SoundEvents.entity_generic_explode, SoundCategory.BLOCKS, 4.0f, 0.5f);
             }
         }
 

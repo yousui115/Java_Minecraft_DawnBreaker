@@ -1,17 +1,15 @@
 package yousui115.db.client.render;
 
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -54,8 +52,9 @@ public class RenderDB extends Render
         ItemStack stackSword = entitySword.getEntityItemStack();
 
         //■てせれーたー と わーるどれんだらー
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        //Tessellator tessellator = Tessellator.getInstance();
+        //WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        //VertexBuffer vertexbuffer = tessellator.getBuffer();
 
         //■おーぷんじーえる
         // ▼法線の再スケーリング(?) ON
@@ -81,17 +80,17 @@ public class RenderDB extends Render
         GlStateManager.pushMatrix();
 
         //■回転、位置の調整(FILOなので注意)
-        if (entitySword.getEntityMode() == 0)
-        {
-            //■突き立てる
-            // ▼4.位置
-            GlStateManager.translate(dX, dY + 0.3, dZ);
-            // ▼3.回転(Y軸)
-            GlStateManager.rotate(entityIn.rotationYaw, 0, 1, 0);
-            // ▼2.回転(Z軸)
-            GlStateManager.rotate(-120.0f, 0, 0, 1);
-        }
-        else
+//        if (entitySword.getEntityMode() == 0)
+//        {
+//            //■突き立てる
+//            // ▼4.位置
+//            GlStateManager.translate(dX, dY + 0.3, dZ);
+//            // ▼3.回転(Y軸)
+//            GlStateManager.rotate(entityIn.rotationYaw, 0, 1, 0);
+//            // ▼2.回転(Z軸)
+//            GlStateManager.rotate(-120.0f, 0, 0, 1);
+//        }
+//        else
         {
             //■浮遊
             float fDeg = (float)(entitySword.ticksExisted % 360);
@@ -106,7 +105,8 @@ public class RenderDB extends Render
         //TODO Playerとの距離に応じて拡大。
 
         // ▼1.拡縮
-        GlStateManager.scale(2, 2, 2);
+//        GlStateManager.scale(2, 2, 2);
+        GlStateManager.scale(1, 1, 1);
 
         //■画像をバインド
         this.bindEntityTexture(entityIn);

@@ -6,21 +6,21 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 import yousui115.db.Util_DB;
-import yousui115.db.common.ExtendedPlayerProperties;
 
 public class EnchantBoD extends EnchantmentDamage
 {
 
     public EnchantBoD(int enchID, String enchName, int enchWeight)
     {
-        super(enchID, new ResourceLocation(enchName), enchWeight, 1);
+        //super(enchID, new ResourceLocation(enchName), enchWeight, 1);
+        super(Enchantment.Rarity.VERY_RARE, 0, EntityEquipmentSlot.MAINHAND);
         this.setName(enchName);
     }
 
@@ -64,10 +64,11 @@ public class EnchantBoD extends EnchantmentDamage
     /**
      * ■Returns the correct traslated name of the enchantment and the level in roman numbers.
      */
+    @Override
     public String getTranslatedName(int level)
     {
-        return EnumChatFormatting.YELLOW + StatCollector.translateToLocal(this.getName());
-
+        //return TextFormatting.YELLOW + StatCollector.translateToLocal(this.getName());
+        return TextFormatting.YELLOW + I18n.translateToLocal(this.getName());
     }
 
     /**
@@ -107,7 +108,8 @@ public class EnchantBoD extends EnchantmentDamage
             //■修理回数による、Undeadへのダメージ補正
             if (userIn instanceof EntityPlayer)
             {
-                int count = ExtendedPlayerProperties.get((EntityPlayer)userIn).getCountRepairAnvil();
+                //int count = ExtendedPlayerProperties.get((EntityPlayer)userIn).getCountRepairAnvil();
+                int count = Util_DB.getCountRepairAnvil((EntityPlayer)userIn);
                 targetIn.hurtResistantTime = 0;
                 targetIn.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer)userIn), 0.5f * count);
             }

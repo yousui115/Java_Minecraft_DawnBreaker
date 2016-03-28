@@ -3,7 +3,7 @@ package yousui115.db.client.render;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -24,7 +24,8 @@ public class RenderDBExplode extends Render
     protected static Tessellator tessellator = Tessellator.getInstance();
 
     //■わーるどれんだらー
-    protected static WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+    //protected static WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+    protected static VertexBuffer vertexbuffer = tessellator.getBuffer();
 
     private static double[][] dVec = {  {-1f, 1f, 1f},        //0
                                         {-1f,-1f, 1f},        //1
@@ -75,7 +76,8 @@ public class RenderDBExplode extends Render
         GlStateManager.scale(fSize, fSize, fSize);
 
         //■描画モード
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
+        //worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
+        vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
 
         //■拡大率
         for(int nScale = 0; nScale < 4; nScale++)
@@ -83,10 +85,10 @@ public class RenderDBExplode extends Render
             double dScale = (0.2d * (double)nScale) + 1.0d;
             for(int idx = 0; idx < nVecPos.length; idx++)
             {
-                worldrenderer.pos(dVec[nVecPos[idx][0]][0] * dScale, dVec[nVecPos[idx][0]][1] * dScale, dVec[nVecPos[idx][0]][2] * dScale).tex(0d, 0d).normal(0f, 1f, 0f).endVertex();
-                worldrenderer.pos(dVec[nVecPos[idx][1]][0] * dScale, dVec[nVecPos[idx][1]][1] * dScale, dVec[nVecPos[idx][1]][2] * dScale).tex(0d, 1d).normal(0f, 1f, 0f).endVertex();
-                worldrenderer.pos(dVec[nVecPos[idx][2]][0] * dScale, dVec[nVecPos[idx][2]][1] * dScale, dVec[nVecPos[idx][2]][2] * dScale).tex(1d, 1d).normal(0f, 1f, 0f).endVertex();
-                worldrenderer.pos(dVec[nVecPos[idx][3]][0] * dScale, dVec[nVecPos[idx][3]][1] * dScale, dVec[nVecPos[idx][3]][2] * dScale).tex(1d, 0d).normal(0f, 1f, 0f).endVertex();
+                vertexbuffer.pos(dVec[nVecPos[idx][0]][0] * dScale, dVec[nVecPos[idx][0]][1] * dScale, dVec[nVecPos[idx][0]][2] * dScale).tex(0d, 0d).normal(0f, 1f, 0f).endVertex();
+                vertexbuffer.pos(dVec[nVecPos[idx][1]][0] * dScale, dVec[nVecPos[idx][1]][1] * dScale, dVec[nVecPos[idx][1]][2] * dScale).tex(0d, 1d).normal(0f, 1f, 0f).endVertex();
+                vertexbuffer.pos(dVec[nVecPos[idx][2]][0] * dScale, dVec[nVecPos[idx][2]][1] * dScale, dVec[nVecPos[idx][2]][2] * dScale).tex(1d, 1d).normal(0f, 1f, 0f).endVertex();
+                vertexbuffer.pos(dVec[nVecPos[idx][3]][0] * dScale, dVec[nVecPos[idx][3]][1] * dScale, dVec[nVecPos[idx][3]][2] * dScale).tex(1d, 0d).normal(0f, 1f, 0f).endVertex();
             }
         }
 

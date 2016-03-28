@@ -2,10 +2,15 @@ package yousui115.db;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -30,7 +35,7 @@ public class DB
 {
     public static final String MOD_ID = "db";
     public static final String MOD_DOMAIN = "yousui115." + MOD_ID;
-    public static final String VERSION = "v3.0";
+    public static final String VERSION = "v4";
 
   //■このクラスのインスタンス
     @Mod.Instance(DB.MOD_ID)
@@ -53,6 +58,9 @@ public class DB
 
     //■
     public static ToolMaterial toolMaterial;
+
+    //■
+    public static final DataParameter<Byte> DP_DB_FLAGS = EntityDataManager.<Byte>createKey(Entity.class, DataSerializers.BYTE);
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -85,6 +93,7 @@ public class DB
         //■エンチャント生成
         //  Enchantment.getEnchantmentById(id) でも取得可能。
         encBoD = new EnchantBoD(Util_DB.getID_Enc_BoD(), "break_of_dawn", 100);
+        Enchantment.enchantmentRegistry.register(Util_DB.getID_Enc_BoD(), new ResourceLocation("break_of_dawn"), encBoD);
 
         //■エンティティ登録
         EntityRegistry.registerModEntity(EntityDBExplode.class, "DBExplode", 1, this, 64, 10, false);
