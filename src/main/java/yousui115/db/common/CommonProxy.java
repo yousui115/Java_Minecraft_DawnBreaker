@@ -13,4 +13,5 @@ public class CommonProxy
     public EntityPlayer getEntityPlayerInstance(){ return null; }
     public RenderManager getRenderManager(){ return null; }
     public RenderItem getRenderItem(){ return null; }
+    public void test() {}
 }

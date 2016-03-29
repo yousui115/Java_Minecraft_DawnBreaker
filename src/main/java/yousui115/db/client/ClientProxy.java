@@ -3,7 +3,10 @@ package yousui115.db.client;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -15,6 +18,7 @@ import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.model.ModelLoader;
@@ -33,6 +37,7 @@ import yousui115.db.entity.EntityDBExplode;
 public class ClientProxy extends CommonProxy
 {
     protected ModelResourceLocation mrESword[] = new ModelResourceLocation[2];
+
 
     @Override
     public void registerRenders()
@@ -69,8 +74,24 @@ public class ClientProxy extends CommonProxy
     {
         ModelLoader.setCustomModelResourceLocation(DB.itemDB,       0, new ModelResourceLocation(DB.MOD_ID + ":" + DB.nameDB,       "inventory"));
         ModelLoader.setCustomModelResourceLocation(DB.itemMeridama, 0, new ModelResourceLocation(DB.MOD_ID + ":" + DB.nameMeridama, "inventory"));
+
+        ModelBakery.registerItemVariants(DB.itemDB, new ModelResourceLocation(DB.MOD_ID + ":" + DB.nameDB,       "inventory"),
+                                                    new ModelResourceLocation(DB.MOD_ID + ":" + DB.nameDB + "L", "inventory"));
+
+        ModelLoader.setCustomMeshDefinition(DB.itemDB, new ItemMeshDefinition(){
+            public ModelResourceLocation getModelLocation(ItemStack stack){
+                return new ModelResourceLocation(new ResourceLocation(DB.MOD_ID, DB.nameDB), "inventory");
+            }
+        });
+
     }
 
+    @Override
+    public void test()
+    {
+        //TODO: 確認用
+        IBakedModel modelDB = getRenderItem().getItemModelMesher().getModelManager().getModel(new ModelResourceLocation(DB.MOD_ID + ":" + DB.nameDB + "L", "inventory"));
+    }
     /**
      * ModelResouceLocation はクライアント側だけなので
      * ResouceLocation に一時的に形を変えお返しする。

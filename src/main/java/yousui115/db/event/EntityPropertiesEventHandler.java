@@ -49,7 +49,8 @@ public class EntityPropertiesEventHandler
 //            IExtendedEntityProperties oldEntityProperties = event.original.getExtendedProperties(ExtendedPlayerProperties.EXT_PROP_NAME);
             //新しいカスタムデータ
 //            IExtendedEntityProperties newEntityProperties = event.entityPlayer.getExtendedProperties(ExtendedPlayerProperties.EXT_PROP_NAME);
-            NBTTagCompound playerData = new NBTTagCompound();
+            NBTTagCompound playerData = event.getEntityPlayer().getEntityData();
+
             //データの吸い出し
 //            oldEntityProperties.saveNBTData(playerData);
             NBTTagCompound nbt = new NBTTagCompound();

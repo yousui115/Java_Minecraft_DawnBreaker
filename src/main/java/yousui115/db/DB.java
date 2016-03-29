@@ -11,6 +11,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -18,9 +19,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import yousui115.db.client.model.ModelLoaderDB;
 import yousui115.db.common.CommonProxy;
 import yousui115.db.enchantment.EnchantBoD;
 import yousui115.db.entity.EntityDB;
@@ -101,6 +104,10 @@ public class DB
 
         //■パケット登録
         PacketHandler.init();
+
+        //■カスタムモデル
+        ModelLoaderRegistry.registerLoader(new ModelLoaderDB());
+
     }
 
     @EventHandler
@@ -125,5 +132,16 @@ public class DB
                 Items.iron_sword,
                 itemMeridama
         );
+
+        //TODO
+        proxy.test();
+
+    }
+
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event)
+    {
+        //TODO
+        proxy.test();
     }
 }
