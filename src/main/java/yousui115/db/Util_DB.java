@@ -11,7 +11,6 @@ import net.minecraft.util.math.MathHelper;
 
 /**
  * DB = Dawn Breaker だよ。DataBaseじゃないよ。
- * @author yousui
  *
  */
 public class Util_DB
@@ -39,9 +38,9 @@ public class Util_DB
     //■マスク
 
     //■データウォッチャー
-    private static int id_dw_BoD = 29;
-    public static void setID_DW_BoD(int id) { id_dw_BoD = id; }
-    public static int  getID_DW_BoD() { return id_dw_BoD; }
+//    private static int id_dw_BoD = 29;
+//    public static void setID_DW_BoD(int id) { id_dw_BoD = id; }
+//    public static int  getID_DW_BoD() { return id_dw_BoD; }
 
     public static final int MASK_DW_DB_AVOID = 0x01;
     public static final int MASK_DW_DB_UEC   = 0x02;

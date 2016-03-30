@@ -9,7 +9,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class MessageDW_BoD implements IMessage
 {
     private int entityID;       //自分自身のEntityID
-    private int idDW;
+//    private int idDW;
     private int value;
 
     /**
@@ -21,10 +21,11 @@ public class MessageDW_BoD implements IMessage
      * ■コンストラクタ
      * @param magic
      */
-    public MessageDW_BoD(Entity targetIn, int idIn, int valueIn)
+//    public MessageDW_BoD(Entity targetIn, int idIn, int valueIn)
+    public MessageDW_BoD(Entity targetIn, int valueIn)
     {
         this.entityID = targetIn.getEntityId();
-        this.idDW = idIn;
+//        this.idDW = idIn;
         this.value = valueIn;
     }
 
@@ -35,7 +36,7 @@ public class MessageDW_BoD implements IMessage
     public void fromBytes(ByteBuf buf)
     {
         this.entityID = buf.readInt();
-        this.idDW = buf.readInt();
+//        this.idDW = buf.readInt();
         this.value = buf.readInt();
     }
 
@@ -46,14 +47,14 @@ public class MessageDW_BoD implements IMessage
     public void toBytes(ByteBuf buf)
     {
         buf.writeInt(this.entityID);
-        buf.writeInt(this.idDW);
+//        buf.writeInt(this.idDW);
         buf.writeInt(this.value);
     }
 
     @SideOnly(Side.CLIENT)
     public int getEntityID() { return this.entityID; }
-    @SideOnly(Side.CLIENT)
-    public int getID_DW() { return this.idDW; }
+//    @SideOnly(Side.CLIENT)
+//    public int getID_DW() { return this.idDW; }
     @SideOnly(Side.CLIENT)
     public int getValue() { return this.value; }
 }

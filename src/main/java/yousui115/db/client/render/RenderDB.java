@@ -1,6 +1,7 @@
 package yousui115.db.client.render;
 
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.Render;
@@ -73,6 +74,9 @@ public class RenderDB extends Render
         //GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
+        // ▼指定のテクスチャユニットとBrightnessX,Y
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 220f, 220f);
+
         // ▼深度テスト
         //GlStateManager.disableDepth();
 
@@ -113,6 +117,9 @@ public class RenderDB extends Render
 
         IBakedModel ibakedmodel = renderItem.getItemModelMesher().getItemModel(stackSword);
         renderItem.renderItem(stackSword, ibakedmodel);
+
+        // ▼指定のテクスチャユニットとBrightnessX,Y
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 0f, 0f);
 
         GlStateManager.popMatrix();
         //GlStateManager.enableDepth();

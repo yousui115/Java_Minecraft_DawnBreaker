@@ -13,7 +13,7 @@ public class MessagePlayerPropertiesHandler implements IMessageHandler<MessagePl
     {
         //Client側にIExtendedEntityPropertiesを渡す。
 //        ExtendedPlayerProperties.get(DB.proxy.getEntityPlayerInstance()).loadNBTData(message.data);
-        Util_DB.setNBTData(DB.proxy.getEntityPlayerInstance(), message.data);
+        Util_DB.setNBTData(DB.proxy.getPlayer(), message.data);
         //REPLYは送らないので、nullを返す。
         return null;
     }

@@ -10,9 +10,7 @@ public class ModelLoaderDB implements ICustomModelLoader
 {
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager)
-    {
-    }
+    public void onResourceManagerReload(IResourceManager resourceManager) {}
 
     @Override
     public boolean accepts(ResourceLocation modelLocation)
@@ -26,9 +24,5 @@ public class ModelLoaderDB implements ICustomModelLoader
     }
 
     @Override
-    public IModel loadModel(ResourceLocation modelLocation) throws Exception
-    {
-        return new ModelDB();
-    }
-
+    public IModel loadModel(ResourceLocation modelLocation) throws Exception { return new ModelDB(); }
 }

@@ -34,11 +34,15 @@ public class BakedModelDB implements IPerspectiveAwareModel
 {
     private TextureAtlasSprite stone;
 
-    public IBakedModel model;
+    private ModelResourceLocation mrlDB;
+    private IBakedModel modelDB;
 
-    public BakedModelDB(Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    public BakedModelDB(Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, ModelResourceLocation mrlIn)
     {
         stone = bakedTextureGetter.apply(new ResourceLocation("blocks/stone"));
+
+        if (mrlIn == null) { mrlIn = new ModelResourceLocation("apple", "inventory"); }
+        mrlDB = mrlIn;
     }
 
     @Override
@@ -89,15 +93,16 @@ public class BakedModelDB implements IPerspectiveAwareModel
         return getModelDB().getOverrides();
     }
 
-    protected IPerspectiveAwareModel getModelDB()
-    {
-        IBakedModel model = DB.proxy.getRenderItem().getItemModelMesher().getModelManager().getModel(new ModelResourceLocation(DB.MOD_ID + ":" + DB.nameDB + "L", "inventory"));
-        return (IPerspectiveAwareModel)model;
-    }
-
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
     {
         return getModelDB().handlePerspective(cameraTransformType);
     }
+
+    protected IPerspectiveAwareModel getModelDB()
+    {
+        return (IPerspectiveAwareModel)DB.proxy.getRenderItem().getItemModelMesher().getModelManager().getModel(mrlDB);
+
+    }
+
 }

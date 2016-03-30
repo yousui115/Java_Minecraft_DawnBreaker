@@ -25,7 +25,7 @@ public class MessageMagicHandler implements IMessageHandler<MessageMagic, IMessa
         //Do something.
 
         //■クライアントサイドにEntityを登録する。
-        EntityPlayer player = DB.proxy.getEntityPlayerInstance();
+        EntityPlayer player = DB.proxy.getPlayer();
         if (player == null) { return null; }
 
         Entity trigger = player.worldObj.getEntityByID(message.getTriggerID());

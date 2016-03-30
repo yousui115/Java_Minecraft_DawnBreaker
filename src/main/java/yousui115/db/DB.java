@@ -132,16 +132,8 @@ public class DB
                 Items.iron_sword,
                 itemMeridama
         );
-
-        //TODO
-        proxy.test();
-
     }
 
     @EventHandler
-    public void postInit(FMLPostInitializationEvent event)
-    {
-        //TODO
-        proxy.test();
-    }
+    public void postInit(FMLPostInitializationEvent event){}
 }

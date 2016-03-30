@@ -3,9 +3,8 @@ package yousui115.db.entity;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.IProjectile;
-import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.effect.EntityWeatherEffect;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +19,6 @@ import yousui115.db.entity.ai.EntityAIAvoidPlayer;
 import yousui115.db.network.MessageDW_BoD;
 import yousui115.db.network.PacketHandler;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 public class EntityDBExplode extends EntityWeatherEffect
@@ -180,13 +178,14 @@ public class EntityDBExplode extends EntityWeatherEffect
             //■生物はUndeadにのみ作用
             if (Util_DB.isUndead(target))
             {
-                //■追加MOBがEntityLivingを継承してない場合は、個別対応が必要。超麺包
-                if (!(target instanceof EntityLiving)) { continue; }
+                //■追加MOBがEntityCreatureを継承してない場合は、個別対応が必要。超麺包
+                if (!(target instanceof EntityCreature)) { continue; }
 
-                EntityLiving living = (EntityLiving)target;
+                //EntityLiving living = (EntityLiving)target;
+                EntityCreature creature = (EntityCreature)target;
 
                 boolean isEscape = false;
-                for (EntityAITasks.EntityAITaskEntry entry : living.tasks.taskEntries)
+                for (EntityAITasks.EntityAITaskEntry entry : creature.tasks.taskEntries)
                 {
                     //■調教済み
                     if (entry.action instanceof EntityAIAvoidPlayer) { isEscape = true; break; }
@@ -197,15 +196,15 @@ public class EntityDBExplode extends EntityWeatherEffect
                     //■調教
                     //  TODO スケさんが射撃体勢に入ってると逃げない。
                     //       リフレクション使ってtargetTasksを掃除しないといけないかも。
-                    living.tasks.addTask(0, this.createAIAvoidPlayer(living));
-                    living.targetTasks.addTask(0, this.createAIAvoidPlayer(living));
+                    creature.tasks.addTask(0, new EntityAIAvoidPlayer(creature, 20.0F, 1.0D, 1.2D));
+                    creature.targetTasks.addTask(0, new EntityAIAvoidPlayer(creature, 20.0F, 1.0D, 1.2D));
 
                     //■DWに記録
-                    Util_DB.setAvoid(living);
+                    Util_DB.setAvoid(creature);
 
                     //■Server -> Client
-                    PacketHandler.INSTANCE.sendToAll(new MessageDW_BoD(living, Util_DB.getID_DW_BoD(), Util_DB.getDW_DB_Flag(living)));
-
+//                    PacketHandler.INSTANCE.sendToAll(new MessageDW_BoD(living, Util_DB.getID_DW_BoD(), Util_DB.getDW_DB_Flag(living)));
+                    PacketHandler.INSTANCE.sendToAll(new MessageDW_BoD(creature, Util_DB.getDW_DB_Flag(creature)));
                 }
             }
         }
@@ -216,28 +215,28 @@ public class EntityDBExplode extends EntityWeatherEffect
      * Playerを探す時に使用される。
      *  World.func_175674_a()内のgetEntitiesWithinAABBForEntity()に渡してる
      */
-    public EntityAIBase createAIAvoidPlayer(EntityLiving living)
-    {
-        return new EntityAIAvoidPlayer(living, new Predicate()
-        {
-            public boolean func_179958_a(Entity entity)
-            {
-                //■プレイヤーなら逃げ出すよ。
-                return entity instanceof EntityPlayer;
-//                if (!(entity instanceof EntityPlayer)) { return false; }
+//    public EntityAIBase createAIAvoidPlayer(EntityLiving living)
+//    {
+//        return new EntityAIAvoidPlayer(living, new Predicate()
+//        {
+//            public boolean func_179958_a(Entity entity)
+//            {
+//                //■プレイヤーなら逃げ出すよ。
+//                return entity instanceof EntityPlayer;
+////                if (!(entity instanceof EntityPlayer)) { return false; }
+////
+////                //■プレイヤー かつ 手にうんこ持ってる
+////                EntityPlayer player = (EntityPlayer)entity;
+////                if (player.getCurrentEquippedItem() == null) { return false; }
+////                return player.getCurrentEquippedItem().getItem() instanceof ItemUnko;
+//            }
+//            public boolean apply(Object p_apply_1_)
+//            {
+//                return this.func_179958_a((Entity)p_apply_1_);
+//            }
+//        }, 15.0F, 1.0D, 1.25D);
 //
-//                //■プレイヤー かつ 手にうんこ持ってる
-//                EntityPlayer player = (EntityPlayer)entity;
-//                if (player.getCurrentEquippedItem() == null) { return false; }
-//                return player.getCurrentEquippedItem().getItem() instanceof ItemUnko;
-            }
-            public boolean apply(Object p_apply_1_)
-            {
-                return this.func_179958_a((Entity)p_apply_1_);
-            }
-        }, 15.0F, 1.0D, 1.25D);
-
-    }
+//    }
 
 
     protected List<Entity> collectEntity()

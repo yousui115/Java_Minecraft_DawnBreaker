@@ -24,8 +24,8 @@ public class MessageDW_BoDHandler implements IMessageHandler<MessageDW_BoD, IMes
         //EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
         //Do something.
 
-        //■クライアントサイドにEntityを登録する。
-        EntityPlayer player = DB.proxy.getEntityPlayerInstance();
+        //■クライアントサイドのEntityのDWにフラグをセットする
+        EntityPlayer player = DB.proxy.getPlayer();
         if (player == null) { return null; }
 
         Entity trigger = player.worldObj.getEntityByID(message.getEntityID());

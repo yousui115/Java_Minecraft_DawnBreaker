@@ -7,11 +7,12 @@ import net.minecraft.util.ResourceLocation;
 
 public class CommonProxy
 {
+    public ResourceLocation modelRL_DB;
+    public ResourceLocation modelRL_DBL;
+
     public void registerRenders(){}
     public void registerModels(){}
-    public ResourceLocation getESwordMRL(int num) { return null; }
-    public EntityPlayer getEntityPlayerInstance(){ return null; }
+    public EntityPlayer getPlayer(){ return null; }
     public RenderManager getRenderManager(){ return null; }
     public RenderItem getRenderItem(){ return null; }
-    public void test() {}
 }
