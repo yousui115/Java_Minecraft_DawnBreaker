@@ -1,6 +1,10 @@
 # [MinecraftMod] DawnBreaker [MC1.8.9]
-##■DL(v3.0)
-https://www.dropbox.com/s/k4heokwsowlv247/DB_v3_M189_F1671.jar?dl=0
+##■DL(v4)
+https://www.dropbox.com/s/2obuuxg0j2zitef/DB_v4_M189_F1722.jar?dl=0
+
+##■環境
+Minecraft 1.8.9  
+Forge 1772
 
 ##■はじめに  
 - このModは「TES V:Skyrim」に登場する剣「Dawnbreaker」の模造品(以下、DB)を追加します。
