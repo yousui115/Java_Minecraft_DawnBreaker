@@ -30,7 +30,7 @@ public class DB
 {
     public static final String MOD_ID = "db";
     public static final String MOD_DOMAIN = "yousui115." + MOD_ID;
-    public static final String VERSION = "v3.0";
+    public static final String VERSION = "v4";
 
   //■このクラスのインスタンス
     @Mod.Instance(DB.MOD_ID)

@@ -42,6 +42,21 @@ public class ExtendedPlayerProperties implements IExtendedEntityProperties
          nbt.setInteger(KEY_RA, this.countRepairAnvil);
 
          compound.setTag(EXT_PROP_NAME, nbt);
+
+         //■custumDataにデータを移植
+         NBTTagCompound customNBT;
+         if (compound.hasKey("ForgeData"))
+         {
+             //■ForgeDataTagが既にある。
+             customNBT = (NBTTagCompound)compound.getTag("ForgeData");
+         }
+         else
+         {
+             //■ForgeDataTagが無い。
+             customNBT = new NBTTagCompound();
+             compound.setTag("ForgeData", customNBT);
+         }
+         customNBT.setTag(EXT_PROP_NAME, nbt);
      }
 
      @Override
