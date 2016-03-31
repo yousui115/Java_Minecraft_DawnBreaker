@@ -1,6 +1,7 @@
 package yousui115.db.entity;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -13,9 +14,11 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import yousui115.db.DB;
 import yousui115.db.item.ItemDB;
 
 import com.google.common.base.Optional;
@@ -108,6 +111,8 @@ public class EntityDB extends Entity
                 //■悲しいお知らせ
                 String s = stack.getItem().getItemStackDisplayName(stack);
                 //DB.proxy.getEntityPlayerInstance().addChatMessage(new ChatComponentText(s + " was lost."));
+                EntityPlayerSP sp = (EntityPlayerSP)DB.proxy.getPlayer();
+                sp.addChatComponentMessage(new TextComponentTranslation(s + " was lost.", new Object[0]));
             }
         }
 
