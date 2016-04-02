@@ -45,12 +45,15 @@ public class ItemDB extends ItemSword
         int n = Util_DB.getCountKill_Undead(playerIn);
         tooltip.add("Undead Kill : " + n);
 
-        if (advanced)
-        {
-            //int i = ExtendedPlayerProperties.get(playerIn).getCountRepairAnvil();
-            int i = Util_DB.getCountRepairAnvil(playerIn);
-            tooltip.add("Repair Count : " + i);
-        }
+//        if (advanced)
+//        {
+//            //int i = ExtendedPlayerProperties.get(playerIn).getCountRepairAnvil();
+//            int i = Util_DB.getCountRepairAnvil(playerIn);
+//            tooltip.add("Repair Count : " + i);
+//        }
+
+        int i = Util_DB.getCountRepairAnvil(playerIn);
+        tooltip.add("Repair Count : " + i);
     }
 
     /**

@@ -161,7 +161,8 @@ public class EntityDB extends Entity
         {
             //■素手なので、そのままItemStackを突っ込む
             //playerIn.setCurrentItemOrArmor(0, this.getEntityItemStack());
-            playerIn.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, this.getEntityItemStack());
+            EntityEquipmentSlot equipSlot = handIn == EnumHand.MAIN_HAND ? EntityEquipmentSlot.MAINHAND : EntityEquipmentSlot.OFFHAND;
+            playerIn.setItemStackToSlot(equipSlot, this.getEntityItemStack());
             this.setDead();
         }
 
