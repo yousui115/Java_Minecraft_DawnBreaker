@@ -8,8 +8,12 @@ Version4(MC1.8.9) : https://www.dropbox.com/s/2obuuxg0j2zitef/DB_v4_M189_F1722.j
 
 
 
-##■DL(v2 MC1.9.0)
+##■DL(v2)
 https://www.dropbox.com/s/e0i20l02exzedwh/DB_v2_M190_F1811.jar?dl=0
+
+##■動作環境
+MineCraft 1.9.0  
+Forge 1811  
 
 ##■はじめに  
 - このModは「TES V:Skyrim」に登場する剣「Dawnbreaker」の模造品(以下、DB)を追加します。
