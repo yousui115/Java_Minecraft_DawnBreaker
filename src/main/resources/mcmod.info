@@ -1,14 +1,14 @@
 [
 {
-  "modid": "db",
-  "name": "DawnBreaker Mod",
-  "description": "add DawnBreaker.",
+  "modid": "dawnbreaker",
+  "name": "Dawnbreaker,
+  "description": "Add Dawnbreaker.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
   "authorList": ["yousui115"],
-  "credits": ";-)",
+  "credits": ":-)",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
