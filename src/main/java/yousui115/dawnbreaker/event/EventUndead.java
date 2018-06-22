@@ -71,7 +71,7 @@ public class EventUndead
         //■くらいあんと
         if (event.getWorld().isRemote)
         {
-            // ▼きゃぱびりてぃの同期(JoinWorld時は強制同期)
+            // ▼きゃぱびりてぃの同期催促(JoinWorld時は強制同期)
             PacketHandler.INSTANCE.sendToServer(new MessageJoinUndead(creature));
         }
         //■さーばー
@@ -89,7 +89,7 @@ public class EventUndead
             }
             if (hasAI == false)
             {
-                creature.tasks.addTask(1, new EntityAIAvoidPlayer(creature, EntityPlayer.class, 6.0F, 1.0D, 1.2D));
+                creature.tasks.addTask(0, new EntityAIAvoidPlayer(creature, EntityPlayer.class, 6.0F, 1.0D, 1.2D));
             }
         }
     }
@@ -229,7 +229,7 @@ public class EventUndead
             //■「爆発する権利をもってる」 かつ 「生物の手で死亡」 かつ「50%の確率」
             if (exp.hasChanceExplode() == true &&
                 event.getSource().getTrueSource() instanceof EntityLivingBase &&
-                undead.getRNG().nextFloat() >= 5.0f)
+                undead.getRNG().nextFloat() >= 0.5f)
             {
                 //■生成と追加
                 EntityMagicExplode explode = new EntityMagicExplode(undead.world, undead);

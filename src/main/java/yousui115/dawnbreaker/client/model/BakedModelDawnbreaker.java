@@ -68,11 +68,11 @@ public class BakedModelDawnbreaker implements IBakedModel
         return model.getOverrides();
     }
 
-    @Override
-    public boolean isAmbientOcclusion(IBlockState state)
-    {
-        return model.isAmbientOcclusion(state);
-    }
+//    @Override
+//    public boolean isAmbientOcclusion(IBlockState state)
+//    {
+//        return model.isAmbientOcclusion(state);
+//    }
 
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType type)

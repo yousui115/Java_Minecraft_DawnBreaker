@@ -1,7 +1,7 @@
 [
 {
   "modid": "dawnbreaker",
-  "name": "Dawnbreaker,
+  "name": "Dawnbreaker",
   "description": "Add Dawnbreaker.",
   "version": "${version}",
   "mcversion": "${mcversion}",

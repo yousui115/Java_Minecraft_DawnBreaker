@@ -40,6 +40,8 @@ public class EntityAIAvoidPlayer extends EntityAIAvoidEntity<EntityPlayer>
         //■
         super(entityIn, classToAvoidIn, avoidTargetSelectorIn, avoidDistanceIn, farSpeedIn, nearSpeedIn);
 
+        this.setMutexBits(3);
+
         //■
         this.canBeSeenSelector = new Predicate<Entity>()
         {
@@ -75,6 +77,12 @@ public class EntityAIAvoidPlayer extends EntityAIAvoidEntity<EntityPlayer>
     public boolean shouldContinueExecuting()
     {
         return exp.getTickAvoid() > 0;
+    }
+
+    @Override
+    public boolean isInterruptible()
+    {
+        return false;
     }
 
     @Override

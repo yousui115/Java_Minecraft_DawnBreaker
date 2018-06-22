@@ -15,7 +15,7 @@ public class ExplodeHandler implements IExplodeHandler, ICapabilitySerializable<
     private boolean isChanceExplode;
 
     private int tickAvoid;
-    private static final int TICKMAX_AVOID = 200;
+    private static final int TICKMAX_AVOID = 600;
 
     private boolean hasTargetPlayer;
 
