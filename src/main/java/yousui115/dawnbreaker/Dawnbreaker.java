@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import yousui115.dawnbreaker.capability.player.CapabilityFaithHandler;
+import yousui115.dawnbreaker.capability.undead.CapabilityUndeadHandler;
 import yousui115.dawnbreaker.client.event.EventBakedModel;
 import yousui115.dawnbreaker.entity.EntityDawnbreaker;
 import yousui115.dawnbreaker.entity.EntityMagicExplode;
@@ -43,7 +44,7 @@ public class Dawnbreaker
     public static final String MOD_DOMAIN = "yousui115." + MOD_ID;
 
     public static final String MOD_NAME = "Dawnbreaker";
-    public static final String MOD_VERSION = "M1122_F2611_v1";
+    public static final String MOD_VERSION = "M1122_F2611_a3";
 
     @SidedProxy(clientSide = MOD_DOMAIN + ".proxy.ClientProxy",
                 serverSide = MOD_DOMAIN + ".proxy.CommonProxy")
@@ -62,6 +63,7 @@ public class Dawnbreaker
 
         //■Capabilityの登録
         CapabilityFaithHandler.register();
+        CapabilityUndeadHandler.register();
 
         //■パケット登録
         PacketHandler.register();

@@ -42,8 +42,6 @@ public class ClientProxy extends CommonProxy
         ModelBakery.registerItemVariants(DBItems.DAWNBREAKER, DBItems.RL_DAWNBREAKER);
         ModelLoader.setCustomMeshDefinition(DBItems.DAWNBREAKER, createMeshDefinition(new ResourceLocation[] { DBItems.RL_DAWNBREAKER }));
 
-
-
         // ▼meridama
         ModelLoader.setCustomModelResourceLocation(DBItems.MERIDAMA, 0, new ModelResourceLocation(DBItems.MERIDAMA.getRegistryName(), "inventory"));
     }

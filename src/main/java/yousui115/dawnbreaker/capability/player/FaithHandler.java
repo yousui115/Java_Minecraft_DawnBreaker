@@ -5,11 +5,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTTagCompound>
 {
     //TODO 下記メンバを保持するクラスを一つ作るべきか (FaithDataやらなんやら)
-    private int countUndeadKill;
+    private int countUndeadKill;        //上位桁
+    private int countUndeadKill_hide;   //下一桁
 
     private int countRepRairDB;
 
@@ -31,23 +34,43 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
     {
         return countUndeadKill;
     }
+    @Override
+    public int getUndeadKillCount_hide()
+    {
+        return countUndeadKill_hide;
+    }
 
     @Override
     public void addUndeadKillCount()
     {
         countUndeadKill++;
-        countUndeadKill = MathHelper.clamp(countUndeadKill, 0, Integer.MAX_VALUE - 2);
+        countUndeadKill_hide++;
+
+        //■「初回10体討伐」or「100討伐」
+        if ((countUndeadKill == 10 && countUndeadKill_hide == 10) || countUndeadKill_hide >= 100)
+        {
+            countUndeadKill_hide = 0;
+        }
+
+        countUndeadKill = MathHelper.clamp(countUndeadKill, 0, getUndeadKillCount_Max());
 
         isDirty = true;
     }
 
     //■このメソッドはMessageFaithHandlerでのみ使用する！
+    @SideOnly(Side.CLIENT)
     @Override
     public void setUndeadKillCount(int countIn)
     {
-        countUndeadKill = MathHelper.clamp(countIn, 0, Integer.MAX_VALUE - 2);
+        countUndeadKill = MathHelper.clamp(countIn, 0, getUndeadKillCount_Max());
     }
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void setUndeadKillCount_hide(int hideIn)
+    {
+        countUndeadKill_hide = MathHelper.clamp(hideIn, 0, 99);
 
+    }
     @Override
     public int getRepairDBCount()
     {
@@ -58,7 +81,7 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
     public void addRepairDBCount()
     {
         countRepRairDB++;
-        countRepRairDB = MathHelper.clamp(countRepRairDB, 0, Integer.MAX_VALUE - 2);
+        countRepRairDB = MathHelper.clamp(countRepRairDB, 0, getRepairDBCount_Max());
 
         isDirty = true;
     }
@@ -67,7 +90,7 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
     @Override
     public void setRepairDBCount(int countIn)
     {
-        countRepRairDB = MathHelper.clamp(countIn, 0, Integer.MAX_VALUE - 2);
+        countRepRairDB = MathHelper.clamp(countIn, 0, getRepairDBCount_Max());
     }
 
     /**
@@ -96,6 +119,7 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
         NBTTagCompound nbt = new NBTTagCompound();
 
         nbt.setInteger("UndeadKill", countUndeadKill);
+        nbt.setInteger("UndeadKill_hide", countUndeadKill_hide);
         nbt.setInteger("RepairDB",   countRepRairDB);
 
         return nbt;
@@ -108,6 +132,7 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
         //CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY.readNBT(this, null, nbt);
 
         countUndeadKill = nbt.getInteger("UndeadKill");
+        countUndeadKill_hide = nbt.getInteger("UndeadKill_hide");
         countRepRairDB   = nbt.getInteger("RepairDB");
     }
 

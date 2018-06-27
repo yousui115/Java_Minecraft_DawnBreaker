@@ -24,9 +24,9 @@ public class MessageJoinWorldHandler implements IMessageHandler<MessageJoinWorld
             //■Server -> Client
             if (player.hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
             {
-                IFaithHandler faith = player.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+                IFaithHandler hdlFaith = player.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
 
-                return new MessageFaith(faith);
+                return new MessageFaith(hdlFaith);
             }
         }
 

@@ -26,6 +26,9 @@ import yousui115.dawnbreaker.util.DBUtils;
 
 public class EventEntityPlayer
 {
+//    public static final UUID UUID_ATTACK_SPEED_FROM_FAITH_POWER = UUID.nameUUIDFromBytes("UUID_ATTACK_SPEED_FROM_FAITH_POWER".getBytes());
+//    public static final AttributeModifier MODIFIER_ATTACK_SPEED_FROM_FAITH_POWER = (new AttributeModifier(UUID_ATTACK_SPEED_FROM_FAITH_POWER, "Attack speed from faith power", 10d, 0)).setSaved(false);
+
     /**
      * ■キャパビリティの追加
      * @param event
@@ -53,17 +56,43 @@ public class EventEntityPlayer
         //■
         if (event.phase == Phase.START)
         {
+            //■
             if (event.player.hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
             {
-                FaithHandler faith = (FaithHandler)event.player.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
-                if (faith.isDirty() == true)
+                FaithHandler hdlFaith = (FaithHandler)event.player.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+                if (hdlFaith.isDirty() == true)
                 {
-                    PacketHandler.INSTANCE.sendTo(new MessageFaith(faith), (EntityPlayerMP) event.player);
-                    faith.resetDirty();
+                    PacketHandler.INSTANCE.sendTo(new MessageFaith(hdlFaith), (EntityPlayerMP) event.player);
+                    hdlFaith.resetDirty();
                 }
             }
         }
     }
+
+//    @SubscribeEvent
+//    public void onAttackSpeed(TickEvent.PlayerTickEvent event)
+//    {
+//        if (event.phase == Phase.START)
+//        {
+//            IAttributeInstance attri = event.player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED);
+//            if (attri.hasModifier(MODIFIER_ATTACK_SPEED_FROM_FAITH_POWER) == true)
+//            {
+//                attri.removeModifier(MODIFIER_ATTACK_SPEED_FROM_FAITH_POWER);
+//            }
+//
+//            FaithHandler faith = null;
+//            if (event.player.hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
+//            {
+//                faith = (FaithHandler)event.player.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+//            }
+//
+//            if (event.player.getHeldItemMainhand().getItem() instanceof ItemDawnbreaker &&
+//                faith.getRepairDBCount() >= 0)
+//            {
+//                attri.applyModifier(MODIFIER_ATTACK_SPEED_FROM_FAITH_POWER);
+//            }
+//        }
+//    }
 
     /**
      * ■信仰心の同期催促 (JoinWorld) (Client -> Server)
@@ -72,7 +101,7 @@ public class EventEntityPlayer
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
-        //メモ：ゲーム開始時、ディメンジョン移動時、死亡時
+        //メモ：ゲーム開始時、ディメンジョン移動時、死亡時 etc?
 
         if (event.getWorld().isRemote &&
             event.getEntity() instanceof EntityPlayer)
@@ -99,13 +128,13 @@ public class EventEntityPlayer
                 newPlayer.hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
             {
                 //■old
-                IFaithHandler oldFaith = (IFaithHandler)oldPlayer.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+                IFaithHandler hdlFaith_old = (IFaithHandler)oldPlayer.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
 
                 //■new
-                IFaithHandler newFaith = (IFaithHandler)newPlayer.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+                IFaithHandler hdlFaith_new = (IFaithHandler)newPlayer.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
 
                 //■old -> new
-                newFaith.copy(oldFaith);
+                hdlFaith_new.copy(hdlFaith_old);
             }
         }
     }
@@ -127,15 +156,16 @@ public class EventEntityPlayer
         if (event.getEntityPlayer() != null &&
             event.getEntityPlayer().hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
         {
-            FaithHandler faith = (FaithHandler)event.getEntityPlayer().getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+            IFaithHandler hdlFaith = event.getEntityPlayer().getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
 
             for (int idx = 0; idx < list.size(); idx++)
             {
                 String str = list.get(idx);
                 if (str.indexOf("Break") != -1)
                 {
-                    list.add(idx + 1, TextFormatting.DARK_AQUA + "Undead Kill : " + faith.getUndeadKillCount());
-                    list.add(idx + 2, TextFormatting.DARK_AQUA + "Repair Count : " + faith.getRepairDBCount());
+                    list.add(idx + 1, TextFormatting.DARK_AQUA + "Undead Kill : " + hdlFaith.getUndeadKillCount());
+                    list.add(idx + 2, TextFormatting.GRAY + " next : " + hdlFaith.getCountNext());
+                    list.add(idx + 3, TextFormatting.DARK_AQUA + "Repair Count : " + hdlFaith.getRepairDBCount());
                 }
             }
         }

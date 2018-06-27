@@ -23,11 +23,12 @@ public class MessageFaithHandler implements IMessageHandler<MessageFaith, IMessa
         //■
         if (player.hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
         {
-            FaithHandler faith = (FaithHandler)player.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
-            if (faith == null) { return null; }
+            FaithHandler hdlFaith = (FaithHandler)player.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+            if (hdlFaith == null) { return null; }
 
-            faith.setUndeadKillCount(messageIn.getCountUndeadKill());
-            faith.setRepairDBCount(messageIn.getCountRepairDB());
+            hdlFaith.setUndeadKillCount(messageIn.getCountUndeadKill());
+            hdlFaith.setUndeadKillCount_hide(messageIn.getCountUndeadKill_hide());
+            hdlFaith.setRepairDBCount(messageIn.getCountRepairDB());
         }
 
         return null;

@@ -10,7 +10,7 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ExplodeHandler implements IExplodeHandler, ICapabilitySerializable<NBTTagCompound>
+public class UndeadHandler implements IUndeadHandler, ICapabilitySerializable<NBTTagCompound>
 {
     private boolean isChanceExplode;
 
@@ -21,7 +21,7 @@ public class ExplodeHandler implements IExplodeHandler, ICapabilitySerializable<
 
     private boolean isDirty;
 
-    public ExplodeHandler()
+    public UndeadHandler()
     {
         isChanceExplode = false;
         tickAvoid = 0;
@@ -63,7 +63,7 @@ public class ExplodeHandler implements IExplodeHandler, ICapabilitySerializable<
 
 
     @Override
-    public void setTargetPlayer(Entity target)
+    public void setHasTargetPlayer(Entity target)
     {
         if (hasTargetPlayer != target instanceof EntityPlayer)
         {
@@ -74,7 +74,7 @@ public class ExplodeHandler implements IExplodeHandler, ICapabilitySerializable<
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void setTargetPlayer(boolean hasTargetPlayerIn)
+    public void setHasTargetPlayer(boolean hasTargetPlayerIn)
     {
         hasTargetPlayer = hasTargetPlayerIn;
     }
@@ -113,7 +113,7 @@ public class ExplodeHandler implements IExplodeHandler, ICapabilitySerializable<
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing)
     {
-        if (capability == CapabilityExplodeHandler.EXPLODE_HANDLER_CAPABILITY)
+        if (capability == CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY)
         {
             return true;
         }
@@ -123,7 +123,7 @@ public class ExplodeHandler implements IExplodeHandler, ICapabilitySerializable<
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing)
     {
-        if (capability == CapabilityExplodeHandler.EXPLODE_HANDLER_CAPABILITY)
+        if (capability == CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY)
         {
             return (T) this;
         }

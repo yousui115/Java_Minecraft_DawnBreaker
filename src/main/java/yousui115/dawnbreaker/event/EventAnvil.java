@@ -50,8 +50,8 @@ public class EventAnvil
                 event.getEntityPlayer().hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
             {
                 //■修理回数カウントアップ
-                IFaithHandler faith = event.getEntityPlayer().getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
-                faith.addRepairDBCount();
+                IFaithHandler hdlFaith = event.getEntityPlayer().getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+                hdlFaith.addRepairDBCount();
             }
         }
     }

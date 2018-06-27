@@ -9,19 +9,19 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import yousui115.dawnbreaker.Dawnbreaker;
 
-public class CapabilityExplodeHandler
+public class CapabilityUndeadHandler
 {
-    @CapabilityInject(IExplodeHandler.class)
-    public static Capability<IExplodeHandler> EXPLODE_HANDLER_CAPABILITY = null;
+    @CapabilityInject(IUndeadHandler.class)
+    public static Capability<IUndeadHandler> UNDEAD_HANDLER_CAPABILITY = null;
 
-    public final static ResourceLocation KYE = new ResourceLocation(Dawnbreaker.MOD_ID, "ExplodeData");
+    public final static ResourceLocation KYE = new ResourceLocation(Dawnbreaker.MOD_ID, "UndeadData");
 
     public static void register()
     {
-        CapabilityManager.INSTANCE.register(IExplodeHandler.class, new Capability.IStorage<IExplodeHandler>()
+        CapabilityManager.INSTANCE.register(IUndeadHandler.class, new Capability.IStorage<IUndeadHandler>()
         {
             @Override
-            public NBTBase writeNBT(Capability<IExplodeHandler> capability, IExplodeHandler instance, EnumFacing side)
+            public NBTBase writeNBT(Capability<IUndeadHandler> capability, IUndeadHandler instance, EnumFacing side)
             {
                 NBTTagList nbtTagList = new NBTTagList();
 
@@ -31,11 +31,11 @@ public class CapabilityExplodeHandler
             }
 
             @Override
-            public void readNBT(Capability<IExplodeHandler> capability, IExplodeHandler instance, EnumFacing side, NBTBase base)
+            public void readNBT(Capability<IUndeadHandler> capability, IUndeadHandler instance, EnumFacing side, NBTBase base)
             {
                 System.out.println("readNBT");
             }
-        }, ExplodeHandler::new);
+        }, UndeadHandler::new);
     }
 
 }

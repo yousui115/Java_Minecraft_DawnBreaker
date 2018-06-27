@@ -114,16 +114,16 @@ public class EnchantmentBOD extends EnchantmentDamage
             userIn.getHeldItemMainhand().getItem() instanceof ItemDawnbreaker &&
             userIn.hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
         {
-            IFaithHandler faith = userIn.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+            IFaithHandler hdlFaith = userIn.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
 
             //■聖なる炎 (1 + 修理回数/10 second)
-            targetIn.setFire(1 + faith.getRepairDBCount()/10);
+            targetIn.setFire(1 + hdlFaith.getRepairDBCount()/10);
 
             //■対象がアンデッド
             if (targetIn instanceof EntityCreature &&
                 DBUtils.isUndead((EntityCreature)targetIn) == true)
             {
-                targetIn.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer)userIn), 0.01f * (float)faith.getUndeadKillCount());
+                targetIn.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer)userIn), 0.01f * (float)hdlFaith.getUndeadKillCount());
             }
         }
 

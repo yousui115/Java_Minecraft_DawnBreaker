@@ -15,8 +15,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import yousui115.dawnbreaker.capability.undead.CapabilityExplodeHandler;
-import yousui115.dawnbreaker.capability.undead.IExplodeHandler;
+import yousui115.dawnbreaker.capability.undead.CapabilityUndeadHandler;
+import yousui115.dawnbreaker.capability.undead.IUndeadHandler;
 import yousui115.dawnbreaker.util.DBUtils;
 
 public class EntityMagicExplode extends EntityWeatherEffect
@@ -155,11 +155,11 @@ public class EntityMagicExplode extends EntityWeatherEffect
             {
                 EntityCreature undead = (EntityCreature)target;
 
-                if (undead.hasCapability(CapabilityExplodeHandler.EXPLODE_HANDLER_CAPABILITY, null) == true)
+                if (undead.hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null) == true)
                 {
-                    IExplodeHandler exp = (IExplodeHandler)undead.getCapability(CapabilityExplodeHandler.EXPLODE_HANDLER_CAPABILITY, null);
+                    IUndeadHandler hdlUndead = (IUndeadHandler)undead.getCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null);
 
-                    exp.setAvoid();
+                    hdlUndead.setAvoid();
                 }
             }
         }

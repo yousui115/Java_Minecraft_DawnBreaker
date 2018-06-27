@@ -15,15 +15,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.Vec3d;
-import yousui115.dawnbreaker.capability.undead.CapabilityExplodeHandler;
-import yousui115.dawnbreaker.capability.undead.IExplodeHandler;
+import yousui115.dawnbreaker.capability.undead.CapabilityUndeadHandler;
+import yousui115.dawnbreaker.capability.undead.IUndeadHandler;
 
 public class EntityAIAvoidPlayer extends EntityAIAvoidEntity<EntityPlayer>
 {
-    protected IExplodeHandler exp;
+    protected IUndeadHandler hdlUndead;
 
-    private final double farSpeed;
-    private final double nearSpeed;
+    private double farSpeed;
+    private double nearSpeed;
     private final float avoidDistance;
 
     private final Predicate<Entity> canBeSeenSelector;
@@ -35,7 +35,7 @@ public class EntityAIAvoidPlayer extends EntityAIAvoidEntity<EntityPlayer>
         this(entityIn, classToAvoidIn, Predicates.alwaysTrue(), avoidDistanceIn, farSpeedIn, nearSpeedIn);
     }
 
-    public EntityAIAvoidPlayer(EntityCreature entityIn, Class<EntityPlayer> classToAvoidIn, Predicate <EntityPlayer> avoidTargetSelectorIn, float avoidDistanceIn, double farSpeedIn, double nearSpeedIn)
+    public EntityAIAvoidPlayer(EntityCreature entityIn, Class<EntityPlayer> classToAvoidIn, Predicate<EntityPlayer> avoidTargetSelectorIn, float avoidDistanceIn, double farSpeedIn, double nearSpeedIn)
     {
         //■
         super(entityIn, classToAvoidIn, avoidTargetSelectorIn, avoidDistanceIn, farSpeedIn, nearSpeedIn);
@@ -56,9 +56,9 @@ public class EntityAIAvoidPlayer extends EntityAIAvoidEntity<EntityPlayer>
         avoidTargetSelector = avoidTargetSelectorIn;
 
         //■
-        if (entity.hasCapability(CapabilityExplodeHandler.EXPLODE_HANDLER_CAPABILITY, null) == true)
+        if (entity.hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null) == true)
         {
-            exp = (IExplodeHandler)entity.getCapability(CapabilityExplodeHandler.EXPLODE_HANDLER_CAPABILITY, null);
+            hdlUndead = (IUndeadHandler)entity.getCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null);
         }
     }
 
@@ -66,9 +66,9 @@ public class EntityAIAvoidPlayer extends EntityAIAvoidEntity<EntityPlayer>
     public boolean shouldExecute()
     {
         //■爆発情報が無いと実行しない
-        if (exp == null) { return false; }
+        if (hdlUndead == null) { return false; }
 
-        if (exp.getTickAvoid() <= 0) { return false; }
+        if (hdlUndead.getTickAvoid() <= 0) { return false; }
 
         return super.shouldExecute();
     }
@@ -76,7 +76,7 @@ public class EntityAIAvoidPlayer extends EntityAIAvoidEntity<EntityPlayer>
     @Override
     public boolean shouldContinueExecuting()
     {
-        return exp.getTickAvoid() > 0;
+        return hdlUndead.getTickAvoid() > 0;
     }
 
     @Override
@@ -88,7 +88,7 @@ public class EntityAIAvoidPlayer extends EntityAIAvoidEntity<EntityPlayer>
     @Override
     public void resetTask()
     {
-        exp.resetAvoid();
+        hdlUndead.resetAvoid();
 
         super.resetTask();
     }
@@ -96,7 +96,7 @@ public class EntityAIAvoidPlayer extends EntityAIAvoidEntity<EntityPlayer>
     @Override
     public void updateTask()
     {
-        exp.setTickAvoid(exp.getTickAvoid() - 1);
+        hdlUndead.setTickAvoid(hdlUndead.getTickAvoid() - 1);
 
         super.updateTask();
 
@@ -134,5 +134,10 @@ public class EntityAIAvoidPlayer extends EntityAIAvoidEntity<EntityPlayer>
                 return entity.getNavigator().getPathToXYZ(vec3d.x, vec3d.y, vec3d.z);
             }
         }
+    }
+
+    public void setFarSpeed(double farSpeedIn)
+    {
+        this.farSpeed = farSpeedIn;
     }
 }

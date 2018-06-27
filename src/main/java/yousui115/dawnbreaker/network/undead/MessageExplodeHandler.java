@@ -7,8 +7,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import yousui115.dawnbreaker.Dawnbreaker;
-import yousui115.dawnbreaker.capability.undead.CapabilityExplodeHandler;
-import yousui115.dawnbreaker.capability.undead.IExplodeHandler;
+import yousui115.dawnbreaker.capability.undead.CapabilityUndeadHandler;
+import yousui115.dawnbreaker.capability.undead.IUndeadHandler;
 
 public class MessageExplodeHandler implements IMessageHandler<MessageExplode, IMessage>
 {
@@ -25,11 +25,11 @@ public class MessageExplodeHandler implements IMessageHandler<MessageExplode, IM
         Entity entity = player.world.getEntityByID(message.getEntityID());
 
         if (entity instanceof EntityCreature &&
-            entity.hasCapability(CapabilityExplodeHandler.EXPLODE_HANDLER_CAPABILITY,null) == true)
+            entity.hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY,null) == true)
         {
-            IExplodeHandler explode = (IExplodeHandler)entity.getCapability(CapabilityExplodeHandler.EXPLODE_HANDLER_CAPABILITY, null);
-            explode.setTickAvoid(message.getTickAvoid());
-            explode.setTargetPlayer(message.hasTargetPlayer());
+            IUndeadHandler hdlUndead = (IUndeadHandler)entity.getCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null);
+            hdlUndead.setTickAvoid(message.getTickAvoid());
+            hdlUndead.setHasTargetPlayer(message.hasTargetPlayer());
 
 //            System.out.println("Client : " + entity.getEntityId() + " : " + message.getTickAvoid());
         }

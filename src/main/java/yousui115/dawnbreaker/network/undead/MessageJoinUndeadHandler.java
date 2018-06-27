@@ -5,8 +5,8 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import yousui115.dawnbreaker.capability.undead.CapabilityExplodeHandler;
-import yousui115.dawnbreaker.capability.undead.IExplodeHandler;
+import yousui115.dawnbreaker.capability.undead.CapabilityUndeadHandler;
+import yousui115.dawnbreaker.capability.undead.IUndeadHandler;
 
 public class MessageJoinUndeadHandler implements IMessageHandler<MessageJoinUndead, MessageExplode>
 {
@@ -23,11 +23,11 @@ public class MessageJoinUndeadHandler implements IMessageHandler<MessageJoinUnde
         Entity entity = player.world.getEntityByID(message.getEntityID());
 
         if (entity instanceof EntityCreature &&
-            entity.hasCapability(CapabilityExplodeHandler.EXPLODE_HANDLER_CAPABILITY, null) == true)
+            entity.hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null) == true)
         {
-            IExplodeHandler explode = entity.getCapability(CapabilityExplodeHandler.EXPLODE_HANDLER_CAPABILITY, null);
+            IUndeadHandler hdlUndead = entity.getCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null);
 
-            return new MessageExplode(entity, explode);
+            return new MessageExplode(entity, hdlUndead);
         }
 
         return null;

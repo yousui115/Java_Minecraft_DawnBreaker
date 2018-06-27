@@ -10,8 +10,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import yousui115.dawnbreaker.Dawnbreaker;
-import yousui115.dawnbreaker.capability.undead.CapabilityExplodeHandler;
-import yousui115.dawnbreaker.capability.undead.IExplodeHandler;
+import yousui115.dawnbreaker.capability.undead.CapabilityUndeadHandler;
+import yousui115.dawnbreaker.capability.undead.IUndeadHandler;
 import yousui115.dawnbreaker.item.ItemDawnbreaker;
 import yousui115.dawnbreaker.util.DBUtils;
 
@@ -40,19 +40,32 @@ public class LayerUndeadCharge implements LayerRenderer<EntityCreature>
     {
         if (renderUndead == null || modelUndead == null) { return; }
 
-        if (creatureIn.hasCapability(CapabilityExplodeHandler.EXPLODE_HANDLER_CAPABILITY,null) == false) { return; }
-        IExplodeHandler explode = creatureIn.getCapability(CapabilityExplodeHandler.EXPLODE_HANDLER_CAPABILITY, null);
-
-        EnumType type = EnumType.NONE;
-        if (explode.getTickAvoid() > 0)
+        //■ドーンブレイカーを手に持ってる必要がある。
+        if (DBUtils.isEnmptyStack(Dawnbreaker.proxy.getPlayer().getHeldItemMainhand()) == true ||
+            Dawnbreaker.proxy.getPlayer().getHeldItemMainhand().getItem() instanceof ItemDawnbreaker == false)
         {
-            type = EnumType.AVOID;
+            return;
         }
-        else if (explode.hasTargetPlayer() == true &&
-                 DBUtils.isEnmptyStack(Dawnbreaker.proxy.getPlayer().getHeldItemMainhand()) == false &&
-                 Dawnbreaker.proxy.getPlayer().getHeldItemMainhand().getItem() instanceof ItemDawnbreaker)
+
+        //■きゃぱびりてぃ
+        if (creatureIn.hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY,null) == false) { return; }
+        IUndeadHandler hdlUndead = creatureIn.getCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null);
+
+        //■装い
+        EnumUndeadLayerType layerType = EnumUndeadLayerType.NONE;
+        if (hdlUndead.getTickAvoid() > 0)
         {
-            type = EnumType.MELEE;
+            //■青
+            layerType = EnumUndeadLayerType.AVOID;
+        }
+        else if (hdlUndead.hasTargetPlayer() == true)
+        {
+            //■赤
+            layerType = EnumUndeadLayerType.MELEE;
+        }
+        else
+        {
+            return;
         }
 
 
@@ -71,7 +84,7 @@ public class LayerUndeadCharge implements LayerRenderer<EntityCreature>
         // ▼
         GlStateManager.enableBlend();
         // ▼
-        GlStateManager.color(type.r, type.g, type.b, type.a);
+        GlStateManager.color(layerType.r, layerType.g, layerType.b, layerType.a);
         // ▼
         GlStateManager.disableLighting();
         // ▼
@@ -111,7 +124,7 @@ public class LayerUndeadCharge implements LayerRenderer<EntityCreature>
         return false;
     }
 
-    protected enum EnumType
+    protected enum EnumUndeadLayerType
     {
         NONE(0.5f, 0.5f, 0.5f, 0.0f),
         AVOID(0.5f, 0.5f, 0.5f, 1.0f),
@@ -122,7 +135,7 @@ public class LayerUndeadCharge implements LayerRenderer<EntityCreature>
         public final float b;
         public final float a;
 
-        private EnumType(float rIn, float gIn, float bIn, float aIn)
+        private EnumUndeadLayerType(float rIn, float gIn, float bIn, float aIn)
         {
             r = rIn;
             g = gIn;

@@ -4,7 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public interface IExplodeHandler
+public interface IUndeadHandler
 {
     /**
      * ■ドーンブレイカーで斬られた
@@ -20,9 +20,9 @@ public interface IExplodeHandler
     void setAvoid();
     void resetAvoid();
 
-    void setTargetPlayer(Entity target);
+    void setHasTargetPlayer(Entity target);
     @SideOnly(Side.CLIENT)
-    void setTargetPlayer(boolean hasTargetPlayer);
+    void setHasTargetPlayer(boolean hasTargetPlayer);
     boolean hasTargetPlayer();
 
     /**
