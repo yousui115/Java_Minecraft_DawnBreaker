@@ -119,4 +119,33 @@ public class ItemDawnbreaker extends ItemSword
         return dawnbreaker;
     }
 
+    /**
+     * ■修理回数に応じた特典
+     *
+     * 　さぁ、さらにアンデッドを浄化するのです、定命の者よ。
+     *
+     */
+    public enum RepairOpt
+    {
+        NONE(0),
+        DAMAGEx2(1),
+        SLOW(2),
+        DROPx2(3),
+        DAMAGEx3(5),
+        SLOW_EXPLODE(6),
+        DROPx4(7),
+        CRITICAL(8);
+
+        private final int count;
+
+        private RepairOpt(int countRepair)
+        {
+            count  = countRepair;
+        }
+
+        public boolean canAction(int countRepair)
+        {
+            return count <= countRepair;
+        }
+    }
 }

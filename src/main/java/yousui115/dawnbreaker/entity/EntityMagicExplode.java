@@ -10,8 +10,10 @@ import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.effect.EntityWeatherEffect;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -25,18 +27,23 @@ public class EntityMagicExplode extends EntityWeatherEffect
     protected Entity trigger;
     //■寿命
     protected int ticksMax;
+    //■SLOWNESS
+    protected boolean isSlowness;
+
     //■多段Hit防止用リスト
     protected List<Entity> hitEntities = Lists.newArrayList();
 
 
     public EntityMagicExplode(World worldIn) { super(worldIn); }
-    public EntityMagicExplode(World worldIn, Entity entityIn)
+    public EntityMagicExplode(World worldIn, Entity entityIn, boolean isSlownessIn)
     {
         this(worldIn);
 
         trigger = entityIn;
 
         ticksMax = 20;
+
+        isSlowness = isSlownessIn;
 
         //■爆心地
         setLocationAndAngles(trigger.posX, trigger.posY + trigger.height/2.0F, trigger.posZ, 0.0F, 0.0F);
@@ -151,7 +158,7 @@ public class EntityMagicExplode extends EntityWeatherEffect
             }
 
             //■生物はUndeadにのみ作用
-            if (target instanceof EntityCreature && DBUtils.isUndead((EntityCreature)target) == true)
+            if (DBUtils.isUndead(target) == true)
             {
                 EntityCreature undead = (EntityCreature)target;
 
@@ -160,6 +167,12 @@ public class EntityMagicExplode extends EntityWeatherEffect
                     IUndeadHandler hdlUndead = (IUndeadHandler)undead.getCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null);
 
                     hdlUndead.setAvoid();
+                }
+
+                //■
+                if (isSlowness == true)
+                {
+                    undead.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 30 * 20, 0));
                 }
             }
         }

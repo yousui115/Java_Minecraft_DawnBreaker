@@ -116,14 +116,34 @@ public class EnchantmentBOD extends EnchantmentDamage
         {
             IFaithHandler hdlFaith = userIn.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
 
-            //■聖なる炎 (1 + 修理回数/10 second)
-            targetIn.setFire(1 + hdlFaith.getRepairDBCount()/10);
+            targetIn.setFire(4);
 
-            //■対象がアンデッド
-            if (targetIn instanceof EntityCreature &&
-                DBUtils.isUndead((EntityCreature)targetIn) == true)
+            //■追加ダメージ（アンデッドのみ）
+            if (DBUtils.isUndead(targetIn) == true)
             {
-                targetIn.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer)userIn), 0.01f * (float)hdlFaith.getUndeadKillCount());
+                EntityCreature undead = (EntityCreature)targetIn;
+
+                //■追加ダメージ（基礎）
+                float damage = 0.01f * (float)hdlFaith.getUndeadKillCount();
+
+                //■修理特典
+                if (ItemDawnbreaker.RepairOpt.CRITICAL.canAction(hdlFaith.getRepairDBCount()) == true &&
+                    undead.world.rand.nextFloat() < 0.001f)
+                {
+                    undead.setHealth(0.1f);
+                }
+                else if (ItemDawnbreaker.RepairOpt.DAMAGEx3.canAction(hdlFaith.getRepairDBCount()) == true)
+                {
+                    damage *= 3f;
+                }
+                else if (ItemDawnbreaker.RepairOpt.DAMAGEx2.canAction(hdlFaith.getRepairDBCount()) == true)
+                {
+                    damage *= 2f;
+                }
+
+                //■ダメージを与える
+                undead.hurtResistantTime = 0;
+                undead.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer)userIn), damage);
             }
         }
 

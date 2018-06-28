@@ -10,6 +10,9 @@ import yousui115.dawnbreaker.entity.EntityMagicExplode;
 
 public class MessageMagicExplodeHandler implements IMessageHandler<MessageMagicExplode, IMessage>
 {
+    /**
+     * ■ Server -> Client
+     */
     @Override
     public IMessage onMessage(MessageMagicExplode message, MessageContext ctx)
     {
@@ -20,7 +23,7 @@ public class MessageMagicExplodeHandler implements IMessageHandler<MessageMagicE
         EntityMagicExplode magic = null;
         if (trigger != null)
         {
-            magic = new EntityMagicExplode(player.world, trigger);
+            magic = new EntityMagicExplode(player.world, trigger, false);
             magic.setEntityId(message.getEntityID());
 //            magic.serverPosX = message.getPosX();
 //            magic.serverPosY = message.getPosY();

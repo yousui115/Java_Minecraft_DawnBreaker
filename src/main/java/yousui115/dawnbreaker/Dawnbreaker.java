@@ -44,13 +44,15 @@ public class Dawnbreaker
     public static final String MOD_DOMAIN = "yousui115." + MOD_ID;
 
     public static final String MOD_NAME = "Dawnbreaker";
-    public static final String MOD_VERSION = "M1122_F2611_a3";
+    public static final String MOD_VERSION = "M1122_F2611_a4";
 
     @SidedProxy(clientSide = MOD_DOMAIN + ".proxy.ClientProxy",
                 serverSide = MOD_DOMAIN + ".proxy.CommonProxy")
     public static CommonProxy proxy;
 
     private static Logger logger;
+
+    public static boolean isJar;
 
     /**
      * ■前処理
@@ -59,6 +61,9 @@ public class Dawnbreaker
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        String strSource = event.getSourceFile().getPath();
+        isJar = strSource.endsWith(".jar");
+
         logger = event.getModLog();
 
         //■Capabilityの登録

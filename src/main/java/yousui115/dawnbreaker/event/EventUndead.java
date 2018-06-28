@@ -1,14 +1,20 @@
 package yousui115.dawnbreaker.event;
 
+import java.lang.reflect.Method;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -19,6 +25,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import yousui115.dawnbreaker.Dawnbreaker;
 import yousui115.dawnbreaker.capability.player.CapabilityFaithHandler;
 import yousui115.dawnbreaker.capability.player.IFaithHandler;
 import yousui115.dawnbreaker.capability.undead.CapabilityUndeadHandler;
@@ -44,8 +51,8 @@ public class EventUndead
     public void attackCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event)
     {
         //■対象：アンデッド
-        if (event.getObject() instanceof EntityCreature == false) { return; }
-        if (DBUtils.isUndead((EntityCreature)event.getObject()) == false) { return; }
+//        if (event.getObject() instanceof EntityCreature == false) { return; }
+        if (DBUtils.isUndead(event.getObject()) == false) { return; }
 
         //■きゃぱびりてぃ の追加
         event.addCapability(CapabilityUndeadHandler.KYE, new UndeadHandler());
@@ -59,14 +66,9 @@ public class EventUndead
     public void joinWorldUndead(EntityJoinWorldEvent event)
     {
         //■対象：あんでっど
-        if (event.getEntity() instanceof EntityCreature == false) { return; }
+//        if (event.getEntity() instanceof EntityCreature == false) { return; }
+        if (DBUtils.isUndead(event.getEntity()) == false) { return; }
         EntityCreature creature = (EntityCreature)event.getEntity();
-
-        //■アンデッドのみ
-//      if (DBUtils.isUndead(creature) == false) { return; }
-        if (creature.hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null) == false) { return; }
-//        IUndeadHandler explode = creature.getCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null);
-
 
         //■くらいあんと
         if (event.getWorld().isRemote)
@@ -100,7 +102,7 @@ public class EventUndead
      * @param event
      */
     @SubscribeEvent
-    public void on(LivingSetAttackTargetEvent event)
+    public void setHasTarget(LivingSetAttackTargetEvent event)
     {
         if (event.getEntityLiving() instanceof EntityCreature == false) { return; }
         EntityCreature creature = (EntityCreature)event.getEntityLiving();
@@ -154,10 +156,9 @@ public class EventUndead
         if (event.getEntityPlayer().world.isRemote == true) { return; }
 
         //■対象：アンデッド
-        if (event.getTarget() != null && event.getTarget() instanceof EntityCreature)
+        if (DBUtils.isUndead(event.getTarget()) == true)
         {
             EntityCreature undead = (EntityCreature)event.getTarget();
-            if (DBUtils.isUndead(undead) == false) { return; }
 
             //■プレイヤー
             EntityPlayer player = event.getEntityPlayer();
@@ -174,6 +175,17 @@ public class EventUndead
 
                     hdlUndead.setChanceExplode(true);
                 }
+
+                //■ついでにslow効果
+                if (player.hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
+                {
+                    IFaithHandler hdlFaith = player.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+
+                    if (ItemDawnbreaker.RepairOpt.SLOW.canAction(hdlFaith.getRepairDBCount()) == true)
+                    {
+                        undead.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 30 * 20, 0));
+                    }
+                }
             }
         }
     }
@@ -186,18 +198,19 @@ public class EventUndead
     public void deathUndead(LivingDeathEvent event)
     {
         //■対象：アンデッド
-        if (event.getEntityLiving() instanceof EntityCreature == false) { return; }
+        if (DBUtils.isUndead(event.getEntityLiving()) == false) { return; }
         EntityCreature undead = (EntityCreature)event.getEntityLiving();
-        if (DBUtils.isUndead(undead) == false) { return; }
 
         //■サーバーのみ
         if (undead.world.isRemote == true) { return; }
+
+        IFaithHandler hdlFaith = null;
 
         //■アンデッド討伐数のカウントアップ
         if (event.getSource().getTrueSource() instanceof EntityPlayer &&
             event.getSource().getTrueSource().hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
         {
-            IFaithHandler hdlFaith = event.getSource().getTrueSource().getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+            hdlFaith = event.getSource().getTrueSource().getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
             hdlFaith.addUndeadKillCount();
 
             //■討伐数が一定値に至ったので、メリ玉進呈
@@ -221,8 +234,8 @@ public class EventUndead
             }
         }
 
-        //■爆発チャンス！
-        if (undead.hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null) == true)
+        //■爆発チャンス！ + ドロップ増加
+        if (hdlFaith != null && undead.hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null) == true)
         {
             IUndeadHandler hdlUndead = (IUndeadHandler)undead.getCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null);
 
@@ -231,13 +244,118 @@ public class EventUndead
                 event.getSource().getTrueSource() instanceof EntityLivingBase &&
                 undead.getRNG().nextFloat() >= 0.5f)
             {
+                boolean isSlownessExp = ItemDawnbreaker.RepairOpt.SLOW_EXPLODE.canAction(hdlFaith.getRepairDBCount());
+
                 //■生成と追加
-                EntityMagicExplode explode = new EntityMagicExplode(undead.world, undead);
+                EntityMagicExplode explode = new EntityMagicExplode(undead.world, undead, isSlownessExp);
                 undead.world.addWeatherEffect(explode);
 
                 //Server -> Client(All)
                 PacketHandler.INSTANCE.sendToAll(new MessageMagicExplode(explode));
             }
+
+            //■ドロップ
+            if (event.getSource() != null &&
+                event.getSource().getImmediateSource() instanceof EntityPlayer &&
+                ((EntityPlayer)event.getSource().getImmediateSource()).getHeldItemMainhand().getItem() instanceof ItemDawnbreaker)
+            {
+                int chance = 0;
+                int lootLevel = 1;
+                if (ItemDawnbreaker.RepairOpt.DROPx4.canAction(hdlFaith.getRepairDBCount()) == true)
+                {
+                    chance = 3;
+                }
+                else if (ItemDawnbreaker.RepairOpt.DROPx2.canAction(hdlFaith.getRepairDBCount()) == true)
+                {
+                    chance = 1;
+                }
+
+
+                try
+                {
+                    //■下ごしらえ
+                    Class[] args = { boolean.class, int.class, DamageSource.class };
+                    Class<EntityLiving> c = EntityLiving.class;
+
+                    //■ターゲットメソッド
+                    String mName = Dawnbreaker.isJar == true ? "func_184610_a" : "dropLoot";
+                    Method m = c.getDeclaredMethod(mName, args);
+
+                    //■アクセシビリティ
+                    m.setAccessible(true);
+
+                    for (int idx = 0; idx < chance; idx++)
+                    {
+                        //■アクセス！
+                        m.invoke((EntityLiving)event.getEntityLiving(), true, lootLevel, event.getSource());
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+
         }
     }
+
+//    @SubscribeEvent
+//    public void dropUndead(LivingDeathEvent event)
+//    {
+//        //■ドロップ増加の対象はアンデッド
+//        if (event.getEntityLiving() == null ||
+//            event.getEntityLiving().hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null) == false)
+//        {
+//            return;
+//        }
+//
+//        //■プレイヤーのドーンブレイカーの攻撃で浄化された
+//        if (event.getSource() != null &&
+//            event.getSource().getImmediateSource() instanceof EntityPlayer &&
+//            ((EntityPlayer)event.getSource().getImmediateSource()).getHeldItemMainhand().getItem() instanceof ItemDawnbreaker)
+//        {
+//            EntityPlayer player = (EntityPlayer)event.getSource().getImmediateSource();
+//            if (player.hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == false) { return; }
+//            IFaithHandler hdlFaith = player.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+//
+//            int chance = 0;
+//            int lootLevel = 1;
+//            if (ItemDawnbreaker.RepairOpt.DROPx3.canActionOpt(hdlFaith.getRepairDBCount()) == true)
+//            {
+//                chance = 2;
+//            }
+//            else if (ItemDawnbreaker.RepairOpt.DROPx2.canActionOpt(hdlFaith.getRepairDBCount()) == true)
+//            {
+//                chance = 1;
+//            }
+//
+//
+//            try
+//            {
+//                //■下ごしらえ
+//                Class[] args = { boolean.class, int.class, DamageSource.class };
+//                Class<EntityLiving> c = EntityLiving.class;
+//
+//                //■ターゲットメソッド
+//                String mName = Dawnbreaker.isJar == true ? "func_184610_a" : "dropLoot";
+//                Method m = c.getDeclaredMethod(mName, args);
+//
+//                //■アクセシビリティ
+//                m.setAccessible(true);
+//
+//                for (int idx = 0; idx < chance; idx++)
+//                {
+//                    //■アクセス！
+//                    m.invoke((EntityLiving)event.getEntityLiving(), true, lootLevel, event.getSource());
+//                }
+//
+//            }
+//            catch (Exception e)
+//            {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//    }
+
 }

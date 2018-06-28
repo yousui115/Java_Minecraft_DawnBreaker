@@ -2,16 +2,19 @@ package yousui115.dawnbreaker.util;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.item.ItemStack;
 
 public class DBUtils
 {
-    public static boolean isUndead(@Nullable EntityCreature creatureIn)
+    public static boolean isUndead(@Nullable Entity entityIn)
     {
-        if (creatureIn == null) { return false; }
+        if (entityIn instanceof EntityCreature == false) { return false; }
 
-        if (creatureIn.isEntityUndead() == true)
+        EntityCreature creature = (EntityCreature)entityIn;
+
+        if (creature.isEntityUndead() == true)
         {
             return true;
         }

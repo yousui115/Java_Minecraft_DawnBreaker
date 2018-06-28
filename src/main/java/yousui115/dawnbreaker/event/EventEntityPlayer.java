@@ -26,9 +26,6 @@ import yousui115.dawnbreaker.util.DBUtils;
 
 public class EventEntityPlayer
 {
-//    public static final UUID UUID_ATTACK_SPEED_FROM_FAITH_POWER = UUID.nameUUIDFromBytes("UUID_ATTACK_SPEED_FROM_FAITH_POWER".getBytes());
-//    public static final AttributeModifier MODIFIER_ATTACK_SPEED_FROM_FAITH_POWER = (new AttributeModifier(UUID_ATTACK_SPEED_FROM_FAITH_POWER, "Attack speed from faith power", 10d, 0)).setSaved(false);
-
     /**
      * ■キャパビリティの追加
      * @param event
@@ -68,31 +65,6 @@ public class EventEntityPlayer
             }
         }
     }
-
-//    @SubscribeEvent
-//    public void onAttackSpeed(TickEvent.PlayerTickEvent event)
-//    {
-//        if (event.phase == Phase.START)
-//        {
-//            IAttributeInstance attri = event.player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED);
-//            if (attri.hasModifier(MODIFIER_ATTACK_SPEED_FROM_FAITH_POWER) == true)
-//            {
-//                attri.removeModifier(MODIFIER_ATTACK_SPEED_FROM_FAITH_POWER);
-//            }
-//
-//            FaithHandler faith = null;
-//            if (event.player.hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
-//            {
-//                faith = (FaithHandler)event.player.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
-//            }
-//
-//            if (event.player.getHeldItemMainhand().getItem() instanceof ItemDawnbreaker &&
-//                faith.getRepairDBCount() >= 0)
-//            {
-//                attri.applyModifier(MODIFIER_ATTACK_SPEED_FROM_FAITH_POWER);
-//            }
-//        }
-//    }
 
     /**
      * ■信仰心の同期催促 (JoinWorld) (Client -> Server)
