@@ -116,6 +116,7 @@ public class EnchantmentBOD extends EnchantmentDamage
         {
             IFaithHandler hdlFaith = userIn.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
 
+            //■闇を照らす炎（全てのMOB）
             targetIn.setFire(4);
 
             //■追加ダメージ（アンデッドのみ）
