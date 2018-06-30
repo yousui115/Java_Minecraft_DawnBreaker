@@ -37,7 +37,6 @@ import yousui115.dawnbreaker.item.ItemDawnbreaker;
 import yousui115.dawnbreaker.network.PacketHandler;
 import yousui115.dawnbreaker.network.undead.MessageExplode;
 import yousui115.dawnbreaker.network.undead.MessageJoinUndead;
-import yousui115.dawnbreaker.network.undead.MessageMagicExplode;
 import yousui115.dawnbreaker.util.DBItems;
 import yousui115.dawnbreaker.util.DBUtils;
 
@@ -248,10 +247,11 @@ public class EventUndead
 
                 //■生成と追加
                 EntityMagicExplode explode = new EntityMagicExplode(undead.world, undead, isSlownessExp);
-                undead.world.addWeatherEffect(explode);
+//                undead.world.addWeatherEffect(explode);
+                undead.world.spawnEntity(explode);
 
                 //Server -> Client(All)
-                PacketHandler.INSTANCE.sendToAll(new MessageMagicExplode(explode));
+//                PacketHandler.INSTANCE.sendToAll(new MessageMagicExplode(explode));
             }
 
             //■ドロップ

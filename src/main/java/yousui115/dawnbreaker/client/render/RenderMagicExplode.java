@@ -28,7 +28,7 @@ public class RenderMagicExplode extends Render<EntityMagicExplode>
     //■わーるどれんだらー
     protected static BufferBuilder vertexbuffer = tessellator.getBuffer();
 
-    private static double[][] dVec = {  {-1f, 1f, 1f},        //0
+    private static double[][] dVec = {{-1f, 1f, 1f},        //0
                                         {-1f,-1f, 1f},        //1
                                         { 1f,-1f, 1f},        //2
                                         { 1f, 1f, 1f},        //3
@@ -37,7 +37,7 @@ public class RenderMagicExplode extends Render<EntityMagicExplode>
                                         { 1f,-1f,-1f},        //6
                                         { 1f, 1f,-1f}};       //7
 
-    private static int[][] nVecPos = {  {0, 1, 2, 3},
+    private static int[][] nVecPos = {{0, 1, 2, 3},
                                         {3, 2, 6, 7},
                                         {0, 3, 7, 4},
                                         {1, 0, 4, 5},
@@ -49,11 +49,18 @@ public class RenderMagicExplode extends Render<EntityMagicExplode>
         super(renderManager);
     }
 
+    @Override
+    public boolean isMultipass()
+    {
+        return true;
+    }
+
     /**
      * ■描画更新処理
      */
     @Override
-    public void doRender(EntityMagicExplode entity, double dX, double dY, double dZ, float f, float f1)
+//    public void doRender(EntityMagicExplode entity, double dX, double dY, double dZ, float f, float f1)
+    public void renderMultipass(EntityMagicExplode entity, double dX, double dY, double dZ, float f, float f1)
     {
         //■描画の前処理
         EntityMagicExplode entityMagic = this.preDraw(entity);
@@ -144,6 +151,7 @@ public class RenderMagicExplode extends Render<EntityMagicExplode>
         GlStateManager.enableBlend();
         // ▼加算+アルファ
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+//        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         //GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);
         //GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
@@ -163,10 +171,8 @@ public class RenderMagicExplode extends Render<EntityMagicExplode>
         //GlStateManager.color(colorType.R, colorType.G, colorType.B, colorType.A);
         GlStateManager.color(0.4f, 0.4f, 1.0f, 0.6f);
 
-        // ▼カリング(指定面を表示しない)
-        GlStateManager.disableCull();
-//        GlStateManager.cullFace(GL11.GL_NONE);
-//        GlStateManager.cullFace(GL11.GL_FRONT_AND_BACK);
+        // ▼DepthMask off
+//        GlStateManager.depthMask(false);
 
         return entityMagic;
     }
@@ -179,6 +185,10 @@ public class RenderMagicExplode extends Render<EntityMagicExplode>
         //■描画後始末
         //  注意:設定した全てを逆に設定し直すのはNG
         //       disableTexture2D()なんてしたら描画がえらい事に！
+
+        // ▼DepthMask on
+//        GlStateManager.depthMask(true);
+
         // ▼法線の再スケーリング(?) OFF
         GlStateManager.disableRescaleNormal();
 
@@ -200,8 +210,6 @@ public class RenderMagicExplode extends Render<EntityMagicExplode>
         // ▼ライティング ON
         GlStateManager.enableLighting();
         //GlStateManager.disableLighting();
-
-        GlStateManager.enableCull();
     }
 
     /**

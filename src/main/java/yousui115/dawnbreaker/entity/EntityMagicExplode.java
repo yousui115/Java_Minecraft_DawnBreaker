@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.IProjectile;
-import net.minecraft.entity.effect.EntityWeatherEffect;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.init.MobEffects;
@@ -21,12 +20,12 @@ import yousui115.dawnbreaker.capability.undead.CapabilityUndeadHandler;
 import yousui115.dawnbreaker.capability.undead.IUndeadHandler;
 import yousui115.dawnbreaker.util.DBUtils;
 
-public class EntityMagicExplode extends EntityWeatherEffect
+public class EntityMagicExplode extends Entity
 {
     //■トリガー(爆発発生源)
     protected Entity trigger;
     //■寿命
-    protected int ticksMax;
+    protected int ticksMax = 20;
     //■SLOWNESS
     protected boolean isSlowness;
 
@@ -40,8 +39,6 @@ public class EntityMagicExplode extends EntityWeatherEffect
         this(worldIn);
 
         trigger = entityIn;
-
-        ticksMax = 20;
 
         isSlowness = isSlownessIn;
 
@@ -103,10 +100,24 @@ public class EntityMagicExplode extends EntityWeatherEffect
     protected void entityInit() {}
 
     @Override
-    protected void readEntityFromNBT(NBTTagCompound compound) {}
+    protected void readEntityFromNBT(NBTTagCompound compound)
+    {
+        this.firstUpdate = compound.getBoolean("firstUpdate");
+
+        this.isSlowness = compound.getBoolean("isSlowness");
+
+        this.ticksExisted = compound.getInteger("ticksExisted");
+    }
 
     @Override
-    protected void writeEntityToNBT(NBTTagCompound compound) {}
+    protected void writeEntityToNBT(NBTTagCompound compound)
+    {
+        compound.setBoolean("firstUpdate", this.firstUpdate);
+
+        compound.setBoolean("isSlowness", this.isSlowness);
+
+        compound.setInteger("ticksExisted", this.ticksExisted);
+    }
 
     //========================== イカ、自作 =====================
 

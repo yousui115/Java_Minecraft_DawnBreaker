@@ -44,7 +44,7 @@ public class Dawnbreaker
     public static final String MOD_DOMAIN = "yousui115." + MOD_ID;
 
     public static final String MOD_NAME = "Dawnbreaker";
-    public static final String MOD_VERSION = "M1122_F2611_a4";
+    public static final String MOD_VERSION = "M1122_F2611_a5";
 
     @SidedProxy(clientSide = MOD_DOMAIN + ".proxy.ClientProxy",
                 serverSide = MOD_DOMAIN + ".proxy.CommonProxy")

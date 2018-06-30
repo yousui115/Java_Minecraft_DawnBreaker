@@ -24,6 +24,7 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
     public FaithHandler()
     {
         countUndeadKill = 0;
+        countUndeadKill_hide = 0;
         countRepRairDB = 0;
 
         isDirty = false;
@@ -99,6 +100,7 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
     public void copy(IFaithHandler faithIn)
     {
         countUndeadKill = faithIn.getUndeadKillCount();
+        countUndeadKill_hide = faithIn.getUndeadKillCount_hide();
         countRepRairDB = faithIn.getRepairDBCount();
     }
 
