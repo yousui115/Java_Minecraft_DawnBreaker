@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "dawnbreaker:recipe_dawnbreaker"
+    ]
+  },
+  "criteria": {
+    "has_meridama": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "dawnbreaker:meridama"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "dawnbreaker:recipe_dawnbreaker"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_meridama",
+      "has_the_recipe"
+    ]
+  ]
+}

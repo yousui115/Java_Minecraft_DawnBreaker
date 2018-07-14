@@ -4,6 +4,8 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import yousui115.dawnbreaker.Dawnbreaker;
+import yousui115.dawnbreaker.network.particle.MessageFlame;
+import yousui115.dawnbreaker.network.particle.MessageFlameHandler;
 import yousui115.dawnbreaker.network.player.MessageFaith;
 import yousui115.dawnbreaker.network.player.MessageFaithHandler;
 import yousui115.dawnbreaker.network.player.MessageJoinWorld;
@@ -31,5 +33,7 @@ public class PacketHandler
         INSTANCE.registerMessage(MessageExplodeHandler.class, MessageExplode.class, 3, Side.CLIENT);
         //■Client -> Server
         INSTANCE.registerMessage(MessageJoinUndeadHandler.class, MessageJoinUndead.class, 4, Side.SERVER);
+        //■Server -> Client
+        INSTANCE.registerMessage(MessageFlameHandler.class, MessageFlame.class, 5, Side.CLIENT);
     }
 }

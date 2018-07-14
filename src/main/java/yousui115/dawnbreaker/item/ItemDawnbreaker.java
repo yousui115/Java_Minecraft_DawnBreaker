@@ -1,7 +1,14 @@
 package yousui115.dawnbreaker.item;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.NonNullList;
@@ -15,6 +22,9 @@ import yousui115.dawnbreaker.util.DBItems;
 
 public class ItemDawnbreaker extends ItemSword
 {
+    //■高速破壊対象マテリアル
+    public static final List<Material> MATERIALS = Lists.newArrayList(Material.LEAVES, Material.WEB);
+
     /**
      * ■コンストラクタ
      * @param material
@@ -22,6 +32,45 @@ public class ItemDawnbreaker extends ItemSword
     public ItemDawnbreaker(ToolMaterial material)
     {
         super(material);
+    }
+
+    @Override
+    public float getDestroySpeed(ItemStack stack, IBlockState state)
+    {
+
+        Material material = state.getMaterial();
+
+        if (MATERIALS.contains(material) == true)
+        {
+            return 200.0F;
+        }
+        else
+        {
+            return super.getDestroySpeed(stack, state);
+        }
+    }
+
+    /**
+     * ■
+     */
+    @Override
+    public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving)
+    {
+        Material material = state.getMaterial();
+
+        int damage = 2;
+        if ((double)state.getBlockHardness(worldIn, pos) == 0.0D)
+        {
+            damage = 0;
+        }
+        else if (MATERIALS.contains(material) == true)
+        {
+            damage = 1;
+        }
+
+        stack.damageItem(damage, entityLiving);
+
+        return true;
     }
 
     //■Eventへ移動
@@ -94,6 +143,13 @@ public class ItemDawnbreaker extends ItemSword
      */
     @Override
     public boolean isEnchantable(ItemStack stack) { return false; }
+
+//    @Override
+//    public boolean canDestroyBlockInCreative(World world, BlockPos pos, ItemStack stack, EntityPlayer player)
+//    {
+////        return !(this instanceof ItemSword);
+//        return true;
+//    }
 
     /* ======================================== FORGE START =====================================*/
 

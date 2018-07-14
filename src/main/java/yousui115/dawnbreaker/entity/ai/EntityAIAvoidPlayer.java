@@ -40,7 +40,7 @@ public class EntityAIAvoidPlayer extends EntityAIAvoidEntity<EntityPlayer>
         //■
         super(entityIn, classToAvoidIn, avoidTargetSelectorIn, avoidDistanceIn, farSpeedIn, nearSpeedIn);
 
-        this.setMutexBits(3);
+        this.setMutexBits(~0x0);
 
         //■
         this.canBeSeenSelector = new Predicate<Entity>()
@@ -70,7 +70,16 @@ public class EntityAIAvoidPlayer extends EntityAIAvoidEntity<EntityPlayer>
 
         if (hdlUndead.getTickAvoid() <= 0) { return false; }
 
-        return super.shouldExecute();
+        super.shouldExecute();
+
+        if (this.closestLivingEntity == null && this.entity.getAttackTarget() instanceof EntityPlayer)
+        {
+            this.closestLivingEntity = (EntityPlayer)this.entity.getAttackTarget();
+        }
+
+        if (this.closestLivingEntity == null) { return false; }
+
+        return true;
     }
 
     @Override

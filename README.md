@@ -1,6 +1,6 @@
 # [MinecraftMod] Dawnbreaker [MC1.12.2]
-## ■DL(a5)
-
+## ■DL(a6)
+https://www.dropbox.com/s/6g16l9jvixpabnq/dawnbreaker_M1122_F2611_a6.jar?dl=0
 
 ## ■動作環境<br>
 MineCraft 1.12.2<br>

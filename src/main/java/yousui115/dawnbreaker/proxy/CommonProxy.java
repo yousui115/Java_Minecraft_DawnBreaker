@@ -9,6 +9,8 @@ public class CommonProxy
 
     public void registerItemColor() {}
 
+    public void registerBlockColor() {}
+
     public void registerRenderer() {}
 
     public void registerLeyer() {}

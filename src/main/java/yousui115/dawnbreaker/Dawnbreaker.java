@@ -2,6 +2,7 @@ package yousui115.dawnbreaker;
 
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -29,10 +30,12 @@ import yousui115.dawnbreaker.client.event.EventBakedModel;
 import yousui115.dawnbreaker.entity.EntityDawnbreaker;
 import yousui115.dawnbreaker.entity.EntityMagicExplode;
 import yousui115.dawnbreaker.event.EventAnvil;
+import yousui115.dawnbreaker.event.EventBlock;
 import yousui115.dawnbreaker.event.EventEntityPlayer;
 import yousui115.dawnbreaker.event.EventUndead;
 import yousui115.dawnbreaker.network.PacketHandler;
 import yousui115.dawnbreaker.proxy.CommonProxy;
+import yousui115.dawnbreaker.util.DBBlocks;
 import yousui115.dawnbreaker.util.DBEnchs;
 import yousui115.dawnbreaker.util.DBItems;
 
@@ -44,7 +47,7 @@ public class Dawnbreaker
     public static final String MOD_DOMAIN = "yousui115." + MOD_ID;
 
     public static final String MOD_NAME = "Dawnbreaker";
-    public static final String MOD_VERSION = "M1122_F2611_a5";
+    public static final String MOD_VERSION = "M1122_F2611_a6";
 
     @SidedProxy(clientSide = MOD_DOMAIN + ".proxy.ClientProxy",
                 serverSide = MOD_DOMAIN + ".proxy.CommonProxy")
@@ -94,8 +97,13 @@ public class Dawnbreaker
         MinecraftForge.EVENT_BUS.register(new EventEntityPlayer());
         MinecraftForge.EVENT_BUS.register(new EventUndead());
         MinecraftForge.EVENT_BUS.register(new EventAnvil());
+        MinecraftForge.EVENT_BUS.register(new EventBlock());
 
         proxy.registerLeyer();
+
+        //■からー
+        proxy.registerItemColor();
+        proxy.registerBlockColor();
     }
 
     /**
@@ -119,6 +127,16 @@ public class Dawnbreaker
     {
         //■アイテムの生成と登録
         DBItems.init(eventIn);
+    }
+
+    /**
+     *
+     * @param event
+     */
+    @SubscribeEvent
+    protected static void registerBlocks(RegistryEvent.Register<Block> eventIn)
+    {
+        DBBlocks.init(eventIn);
     }
 
     /**
@@ -152,8 +170,8 @@ public class Dawnbreaker
         event.getRegistry().register(
                 EntityEntryBuilder.create()
                     .entity(EntityDawnbreaker.class)
-                    .id(new ResourceLocation(MOD_ID, "db_dawnbreaker"), 1)
-                    .name("db_dawnbreaker")
+                    .id(new ResourceLocation(MOD_ID, "entity_dawnbreaker"), 1)
+                    .name("entity_dawnbreaker")
                     .tracker(50, 5, false)
                     .build()
             );
@@ -162,8 +180,8 @@ public class Dawnbreaker
         event.getRegistry().register(
                 EntityEntryBuilder.create()
                     .entity(EntityMagicExplode.class)
-                    .id(new ResourceLocation(MOD_ID, "db_magicexplode"), 2)
-                    .name("db_magicexplode")
+                    .id(new ResourceLocation(MOD_ID, "entity_magicexplode"), 2)
+                    .name("entity_magicexplode")
                     .tracker(50, 5, false)
                     .build()
             );
@@ -178,11 +196,11 @@ public class Dawnbreaker
     {
         ItemStack stack = new ItemStack(DBItems.DAWNBREAKER);
         stack.addEnchantment(DBEnchs.ENCH_BOD, DBEnchs.ENCH_BOD.getMinLevel());
-        IRecipe recipe = new ShapelessOreRecipe(new ResourceLocation(MOD_ID, "db_recipe_dawnbreaker"),
+        IRecipe recipe = new ShapelessOreRecipe(new ResourceLocation(MOD_ID, "recipe_dawnbreaker"),
                                                 stack,
                                                 new ItemStack(DBItems.MERIDAMA),
                                                 new ItemStack(Items.IRON_SWORD));
-        recipe.setRegistryName(new ResourceLocation(MOD_ID, "db_recipe_dawnbreaker"));
+        recipe.setRegistryName(new ResourceLocation(MOD_ID, "recipe_dawnbreaker"));
         event.getRegistry().register(recipe);
     }
 }

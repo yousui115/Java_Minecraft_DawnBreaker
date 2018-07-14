@@ -1,0 +1,14 @@
+{
+    "variants": {
+        "generation=0": { "model": "dawnbreaker:break" },
+        "generation=1": { "model": "dawnbreaker:break" },
+        "generation=2": { "model": "dawnbreaker:break" },
+        "generation=3": { "model": "dawnbreaker:break" },
+        "generation=4": { "model": "dawnbreaker:break" },
+        "generation=5": { "model": "dawnbreaker:break" },
+        "generation=6": { "model": "dawnbreaker:break" },
+        "generation=7": { "model": "dawnbreaker:break" },
+        "generation=8": { "model": "dawnbreaker:break" },
+        "generation=9": { "model": "dawnbreaker:break" }
+    }
+}

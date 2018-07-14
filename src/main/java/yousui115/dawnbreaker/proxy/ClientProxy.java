@@ -2,11 +2,14 @@ package yousui115.dawnbreaker.proxy;
 
 import java.util.Set;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
@@ -18,6 +21,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -26,6 +31,7 @@ import yousui115.dawnbreaker.client.render.RenderDawnbreaker;
 import yousui115.dawnbreaker.client.render.RenderMagicExplode;
 import yousui115.dawnbreaker.entity.EntityDawnbreaker;
 import yousui115.dawnbreaker.entity.EntityMagicExplode;
+import yousui115.dawnbreaker.util.DBBlocks;
 import yousui115.dawnbreaker.util.DBItems;
 
 public class ClientProxy extends CommonProxy
@@ -58,9 +64,24 @@ public class ClientProxy extends CommonProxy
             @Override
             public int colorMultiplier(ItemStack stack, int layer)
             {
-                return 0x000000;
+                return 0x9999ff;
             }
         }, new Item[] { DBItems.MERIDAMA });
+    }
+
+    @Override
+    public void registerBlockColor()
+    {
+        //■
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new IBlockColor()
+        {
+            @Override
+            public int colorMultiplier(IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex)
+            {
+//                System.out.println("state : " + state.getProperties().get(BlockDestroyWeb.DESTROY));
+                return 0xff0000;
+            }
+        },new Block[] { DBBlocks.DESTROY_WEB } );
     }
 
     /**
