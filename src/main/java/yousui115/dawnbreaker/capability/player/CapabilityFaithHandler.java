@@ -14,7 +14,7 @@ public class CapabilityFaithHandler
     @CapabilityInject(IFaithHandler.class)
     public static Capability<IFaithHandler> FAITH_HANDLER_CAPABILITY = null;
 
-    public final static ResourceLocation KYE = new ResourceLocation(Dawnbreaker.MOD_ID, "FaithData");
+    public final static ResourceLocation KYE = new ResourceLocation(Dawnbreaker.MOD_ID, "faithdata");
 
 
     public static void register()

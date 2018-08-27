@@ -22,6 +22,7 @@ import yousui115.dawnbreaker.item.ItemDawnbreaker;
 import yousui115.dawnbreaker.network.PacketHandler;
 import yousui115.dawnbreaker.network.player.MessageFaith;
 import yousui115.dawnbreaker.network.player.MessageJoinWorld;
+import yousui115.dawnbreaker.util.DBEnchs;
 import yousui115.dawnbreaker.util.DBUtils;
 
 public class EventEntityPlayer
@@ -133,11 +134,14 @@ public class EventEntityPlayer
             for (int idx = 0; idx < list.size(); idx++)
             {
                 String str = list.get(idx);
-                if (str.indexOf("Break") != -1)
+                if (str.indexOf(DBEnchs.ENCH_BOD.getTransName()) != -1)
                 {
+                    list.remove(idx);
+                    list.add(idx, TextFormatting.YELLOW + DBEnchs.ENCH_BOD.getTransName());
                     list.add(idx + 1, TextFormatting.DARK_AQUA + "Undead Kill : " + hdlFaith.getUndeadKillCount());
                     list.add(idx + 2, TextFormatting.GRAY + " next : " + hdlFaith.getCountNext());
                     list.add(idx + 3, TextFormatting.DARK_AQUA + "Repair Count : " + hdlFaith.getRepairDBCount());
+                    break;
                 }
             }
         }

@@ -1,6 +1,7 @@
 package yousui115.dawnbreaker.item;
 
 import java.util.List;
+import java.util.Random;
 
 import com.google.common.collect.Lists;
 
@@ -178,20 +179,21 @@ public class ItemDawnbreaker extends ItemSword
     /**
      * ■修理回数に応じた特典
      *
-     * 　さぁ、さらにアンデッドを浄化するのです、定命の者よ。
+     * 　さらにアンデッドを浄化するのです。定命の者よ。
      *
      */
     public enum RepairOpt
     {
         NONE(0),
-        DAMAGEx2(1),
-        SLOW(2),
-        DROPx2(3),
-        DAMAGEx3(5),
-        SLOW_EXPLODE(6),
-        DROPx4(7),
-        CRITICAL(8);
+        DAMAGEx2(2),
+        SLOW(4),
+        DROPx2(6),
+        DAMAGEx3(10),
+        SLOW_EXPLODE(12),
+        DROPx4(14),
+        CRITICAL(16);
 
+        //■リペア特典が付与される回数
         private final int count;
 
         private RepairOpt(int countRepair)
@@ -202,6 +204,60 @@ public class ItemDawnbreaker extends ItemSword
         public boolean canAction(int countRepair)
         {
             return count <= countRepair;
+        }
+
+        //■スロー攻撃が有効か否か
+        public static boolean canSlowAttack(int countRepair)
+        {
+            return SLOW.count <= countRepair;
+        }
+
+        //■スロー爆発が有効か否か
+        public static boolean canSlowExplode(int countRepair)
+        {
+            return SLOW_EXPLODE.count <= countRepair;
+        }
+
+        //■ドロップ抽選回数
+        public static int countDrop(int countRepair)
+        {
+            int drop = 1;
+            if (DROPx4.count <= countRepair)
+            {
+                drop =  4;
+            }
+            else if (DROPx2.count <= countRepair)
+            {
+                drop =  2;
+            }
+
+            return drop;
+        }
+
+        //■ダメージ倍率
+        public static float magDamage(int countRepair)
+        {
+            float mag = 1.0f;
+            if (DAMAGEx3.count <= countRepair)
+            {
+                mag = 3.0f;
+            }
+            else if (DAMAGEx2.count <= countRepair)
+            {
+                mag = 2.0f;
+            }
+            return mag;
+        }
+
+        //■クリティカル
+        public static boolean canCritical(int countRepair, Random randIn)
+        {
+            if (CRITICAL.count <= countRepair && randIn.nextFloat() < 0.01f)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

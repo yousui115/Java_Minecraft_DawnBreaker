@@ -72,14 +72,15 @@ public class EnchantmentBOD extends EnchantmentDamage
     @Override
     public String getName() { return "enchantment.damage." + this.name; }
 
+    public String getTransName() { return I18n.translateToLocal(this.getName()); }
+
     /**
      * ■Returns the correct traslated name of the enchantment and the level in roman numbers.
      */
     @Override
     public String getTranslatedName(int level)
     {
-        //return TextFormatting.YELLOW + StatCollector.translateToLocal(this.getName());
-        return TextFormatting.YELLOW + I18n.translateToLocal(this.getName());
+        return TextFormatting.DARK_GRAY + getTransName();
     }
 
     /**
@@ -128,19 +129,27 @@ public class EnchantmentBOD extends EnchantmentDamage
                 float damage = 0.01f * (float)hdlFaith.getUndeadKillCount();
 
                 //■修理特典
-                if (ItemDawnbreaker.RepairOpt.CRITICAL.canAction(hdlFaith.getRepairDBCount()) == true &&
-                    undead.world.rand.nextFloat() < 0.001f)
+                if (ItemDawnbreaker.RepairOpt.canCritical(hdlFaith.getRepairDBCount(), undead.world.rand) == true)
                 {
                     undead.setHealth(0.1f);
                 }
-                else if (ItemDawnbreaker.RepairOpt.DAMAGEx3.canAction(hdlFaith.getRepairDBCount()) == true)
+                else
                 {
-                    damage *= 3f;
+                    damage *= ItemDawnbreaker.RepairOpt.magDamage(hdlFaith.getRepairDBCount());
                 }
-                else if (ItemDawnbreaker.RepairOpt.DAMAGEx2.canAction(hdlFaith.getRepairDBCount()) == true)
-                {
-                    damage *= 2f;
-                }
+//                if (ItemDawnbreaker.RepairOpt.CRITICAL.canAction(hdlFaith.getRepairDBCount()) == true &&
+//                    undead.world.rand.nextFloat() < 0.001f)
+//                {
+//                    undead.setHealth(0.1f);
+//                }
+//                else if (ItemDawnbreaker.RepairOpt.DAMAGEx3.canAction(hdlFaith.getRepairDBCount()) == true)
+//                {
+//                    damage *= 3f;
+//                }
+//                else if (ItemDawnbreaker.RepairOpt.DAMAGEx2.canAction(hdlFaith.getRepairDBCount()) == true)
+//                {
+//                    damage *= 2f;
+//                }
 
                 //■ダメージを与える
                 undead.hurtResistantTime = 0;

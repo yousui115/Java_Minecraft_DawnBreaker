@@ -14,7 +14,7 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
     private int countUndeadKill;        //上位桁
     private int countUndeadKill_hide;   //下一桁
 
-    private int countRepRairDB;
+    private int countRepairDB;
 
     private boolean isDirty;
 
@@ -25,7 +25,7 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
     {
         countUndeadKill = 0;
         countUndeadKill_hide = 0;
-        countRepRairDB = 0;
+        countRepairDB = 0;
 
         isDirty = false;
     }
@@ -75,14 +75,14 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
     @Override
     public int getRepairDBCount()
     {
-        return countRepRairDB;
+        return countRepairDB;
     }
 
     @Override
     public void addRepairDBCount()
     {
-        countRepRairDB++;
-        countRepRairDB = MathHelper.clamp(countRepRairDB, 0, getRepairDBCount_Max());
+        countRepairDB++;
+        countRepairDB = MathHelper.clamp(countRepairDB, 0, getRepairDBCount_Max());
 
         isDirty = true;
     }
@@ -91,7 +91,7 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
     @Override
     public void setRepairDBCount(int countIn)
     {
-        countRepRairDB = MathHelper.clamp(countIn, 0, getRepairDBCount_Max());
+        countRepairDB = MathHelper.clamp(countIn, 0, getRepairDBCount_Max());
     }
 
     /**
@@ -101,7 +101,7 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
     {
         countUndeadKill = faithIn.getUndeadKillCount();
         countUndeadKill_hide = faithIn.getUndeadKillCount_hide();
-        countRepRairDB = faithIn.getRepairDBCount();
+        countRepairDB = faithIn.getRepairDBCount();
     }
 
 
@@ -122,7 +122,7 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
 
         nbt.setInteger("UndeadKill", countUndeadKill);
         nbt.setInteger("UndeadKill_hide", countUndeadKill_hide);
-        nbt.setInteger("RepairDB",   countRepRairDB);
+        nbt.setInteger("RepairDB",   countRepairDB);
 
         return nbt;
     }
@@ -135,7 +135,7 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
 
         countUndeadKill = nbt.getInteger("UndeadKill");
         countUndeadKill_hide = nbt.getInteger("UndeadKill_hide");
-        countRepRairDB   = nbt.getInteger("RepairDB");
+        countRepairDB   = nbt.getInteger("RepairDB");
     }
 
     @Override

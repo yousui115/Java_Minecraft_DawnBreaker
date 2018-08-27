@@ -2,7 +2,7 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "dawnbreaker:recipe_dawnbreaker"
+      "yousui115.dawnbreaker:recipe_dawnbreaker"
     ]
   },
   "criteria": {
@@ -11,7 +11,7 @@
       "conditions": {
         "items": [
           {
-            "item": "dawnbreaker:meridama"
+            "item": "yousui115.dawnbreaker:meridama"
           }
         ]
       }
@@ -19,7 +19,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "dawnbreaker:recipe_dawnbreaker"
+        "recipe": "yousui115.dawnbreaker:recipe_dawnbreaker"
       }
     }
   },

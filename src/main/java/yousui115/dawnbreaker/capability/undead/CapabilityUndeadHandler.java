@@ -14,7 +14,7 @@ public class CapabilityUndeadHandler
     @CapabilityInject(IUndeadHandler.class)
     public static Capability<IUndeadHandler> UNDEAD_HANDLER_CAPABILITY = null;
 
-    public final static ResourceLocation KYE = new ResourceLocation(Dawnbreaker.MOD_ID, "UndeadData");
+    public final static ResourceLocation KYE = new ResourceLocation(Dawnbreaker.MOD_ID, "undeaddata");
 
     public static void register()
     {

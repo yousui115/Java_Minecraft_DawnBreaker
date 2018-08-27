@@ -1,7 +1,7 @@
 {
     "parent": "block/cube_all",
     "textures": {
-        "all": "dawnbreaker:blocks/break"
+        "all": "yousui115.dawnbreaker:blocks/break"
     }
 }
 

@@ -219,6 +219,9 @@ public class EventUndead
                 double posY = MathHelper.clamp(event.getEntityLiving().posY, 0d, 255d);   //奈落・天上対策
                 BlockPos bp = new BlockPos(event.getEntityLiving().posX, posY, event.getEntityLiving().posZ);
 
+                //MEMO 初手110匹を一か所で一斉に討伐しても、貰えるメリ玉は一つ。のはず。
+                //MEMO 例えば、ゾンビの足がチェストに埋まった状態でメリ玉付与が起こると、当然中身は消え、メリ玉が残る。はず。
+
                 //■謙虚なチェスト生成(容赦ない設置)
                 world.setBlockState(bp, Blocks.CHEST.getDefaultState());
 
@@ -259,16 +262,18 @@ public class EventUndead
                 event.getSource().getImmediateSource() instanceof EntityPlayer &&
                 ((EntityPlayer)event.getSource().getImmediateSource()).getHeldItemMainhand().getItem() instanceof ItemDawnbreaker)
             {
-                int chance = 0;
+                int chance = ItemDawnbreaker.RepairOpt.countDrop(hdlFaith.getRepairDBCount()) - 1;
+                if (chance <= 0) { return; }
+
                 int lootLevel = 1;
-                if (ItemDawnbreaker.RepairOpt.DROPx4.canAction(hdlFaith.getRepairDBCount()) == true)
-                {
-                    chance = 3;
-                }
-                else if (ItemDawnbreaker.RepairOpt.DROPx2.canAction(hdlFaith.getRepairDBCount()) == true)
-                {
-                    chance = 1;
-                }
+//                if (ItemDawnbreaker.RepairOpt.DROPx4.canAction(hdlFaith.getRepairDBCount()) == true)
+//                {
+//                    chance = 3;
+//                }
+//                else if (ItemDawnbreaker.RepairOpt.DROPx2.canAction(hdlFaith.getRepairDBCount()) == true)
+//                {
+//                    chance = 1;
+//                }
 
 
                 try
@@ -299,63 +304,4 @@ public class EventUndead
 
         }
     }
-
-//    @SubscribeEvent
-//    public void dropUndead(LivingDeathEvent event)
-//    {
-//        //■ドロップ増加の対象はアンデッド
-//        if (event.getEntityLiving() == null ||
-//            event.getEntityLiving().hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null) == false)
-//        {
-//            return;
-//        }
-//
-//        //■プレイヤーのドーンブレイカーの攻撃で浄化された
-//        if (event.getSource() != null &&
-//            event.getSource().getImmediateSource() instanceof EntityPlayer &&
-//            ((EntityPlayer)event.getSource().getImmediateSource()).getHeldItemMainhand().getItem() instanceof ItemDawnbreaker)
-//        {
-//            EntityPlayer player = (EntityPlayer)event.getSource().getImmediateSource();
-//            if (player.hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == false) { return; }
-//            IFaithHandler hdlFaith = player.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
-//
-//            int chance = 0;
-//            int lootLevel = 1;
-//            if (ItemDawnbreaker.RepairOpt.DROPx3.canActionOpt(hdlFaith.getRepairDBCount()) == true)
-//            {
-//                chance = 2;
-//            }
-//            else if (ItemDawnbreaker.RepairOpt.DROPx2.canActionOpt(hdlFaith.getRepairDBCount()) == true)
-//            {
-//                chance = 1;
-//            }
-//
-//
-//            try
-//            {
-//                //■下ごしらえ
-//                Class[] args = { boolean.class, int.class, DamageSource.class };
-//                Class<EntityLiving> c = EntityLiving.class;
-//
-//                //■ターゲットメソッド
-//                String mName = Dawnbreaker.isJar == true ? "func_184610_a" : "dropLoot";
-//                Method m = c.getDeclaredMethod(mName, args);
-//
-//                //■アクセシビリティ
-//                m.setAccessible(true);
-//
-//                for (int idx = 0; idx < chance; idx++)
-//                {
-//                    //■アクセス！
-//                    m.invoke((EntityLiving)event.getEntityLiving(), true, lootLevel, event.getSource());
-//                }
-//
-//            }
-//            catch (Exception e)
-//            {
-//                throw new RuntimeException(e);
-//            }
-//        }
-//    }
-
 }

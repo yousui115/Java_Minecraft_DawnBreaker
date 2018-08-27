@@ -1,0 +1,14 @@
+{
+    "variants": {
+        "generation=0": { "model": "yousui115.dawnbreaker:break" },
+        "generation=1": { "model": "yousui115.dawnbreaker:break" },
+        "generation=2": { "model": "yousui115.dawnbreaker:break" },
+        "generation=3": { "model": "yousui115.dawnbreaker:break" },
+        "generation=4": { "model": "yousui115.dawnbreaker:break" },
+        "generation=5": { "model": "yousui115.dawnbreaker:break" },
+        "generation=6": { "model": "yousui115.dawnbreaker:break" },
+        "generation=7": { "model": "yousui115.dawnbreaker:break" },
+        "generation=8": { "model": "yousui115.dawnbreaker:break" },
+        "generation=9": { "model": "yousui115.dawnbreaker:break" }
+    }
+}

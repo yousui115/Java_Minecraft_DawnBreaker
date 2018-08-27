@@ -1,7 +1,7 @@
 {
     "parent": "item/handheld",
     "textures": {
-        "layer0": "dawnbreaker:items/dawnbreaker"
+        "layer0": "yousui115.dawnbreaker:items/dawnbreaker"
     },
     "display": {
         "thirdperson": {
