@@ -18,6 +18,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -31,6 +32,8 @@ import yousui115.dawnbreaker.capability.player.IFaithHandler;
 import yousui115.dawnbreaker.capability.undead.CapabilityUndeadHandler;
 import yousui115.dawnbreaker.capability.undead.IUndeadHandler;
 import yousui115.dawnbreaker.capability.undead.UndeadHandler;
+import yousui115.dawnbreaker.capability.world.CapWorldHandler;
+import yousui115.dawnbreaker.capability.world.IWorldHandler;
 import yousui115.dawnbreaker.entity.EntityMagicExplode;
 import yousui115.dawnbreaker.entity.ai.EntityAIAvoidPlayer;
 import yousui115.dawnbreaker.item.ItemDawnbreaker;
@@ -97,11 +100,11 @@ public class EventUndead
 
 
     /**
-     * ■
+     * ■ターゲットを定めた時に呼ばれる
      * @param event
      */
     @SubscribeEvent
-    public void setHasTarget(LivingSetAttackTargetEvent event)
+    public void setAttackTarget(LivingSetAttackTargetEvent event)
     {
         if (event.getEntityLiving() instanceof EntityCreature == false) { return; }
         EntityCreature creature = (EntityCreature)event.getEntityLiving();
@@ -165,7 +168,7 @@ public class EventUndead
 
             //■メインハンドにドーンブレイカーを持ってる。
             ItemStack mainStack = player.getHeldItemMainhand();
-            if (DBUtils.isEnmptyStack(mainStack) == false && mainStack.getItem() instanceof ItemDawnbreaker)
+            if (DBUtils.isDBwithBoD(mainStack) == true)
             {
                 //■爆発するチャンスを与えよう。
                 if (undead.hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null) == true)
@@ -203,17 +206,17 @@ public class EventUndead
         //■サーバーのみ
         if (undead.world.isRemote == true) { return; }
 
-        IFaithHandler hdlFaith = null;
+        IFaithHandler hdlF = null;
 
         //■アンデッド討伐数のカウントアップ
         if (event.getSource().getTrueSource() instanceof EntityPlayer &&
             event.getSource().getTrueSource().hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
         {
-            hdlFaith = event.getSource().getTrueSource().getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
-            hdlFaith.addUndeadKillCount();
+            hdlF = event.getSource().getTrueSource().getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+            hdlF.addUndeadKillCount();
 
             //■討伐数が一定値に至ったので、メリ玉進呈
-            if (hdlFaith.getUndeadKillCount_hide() == 0)
+            if (hdlF.getUndeadKillCount_hide() == 0)
             {
                 World world = undead.world;
                 double posY = MathHelper.clamp(event.getEntityLiving().posY, 0d, 255d);   //奈落・天上対策
@@ -237,24 +240,39 @@ public class EventUndead
         }
 
         //■爆発チャンス！ + ドロップ増加
-        if (hdlFaith != null && undead.hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null) == true)
+        if (hdlF != null && undead.hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null) == true)
         {
             IUndeadHandler hdlUndead = (IUndeadHandler)undead.getCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null);
 
             //■「爆発する権利をもってる」 かつ 「生物の手で死亡」 かつ「50%の確率」
             if (hdlUndead.hasChanceExplode() == true &&
-                event.getSource().getTrueSource() instanceof EntityLivingBase &&
-                undead.getRNG().nextFloat() >= 0.5f)
+                event.getSource().getTrueSource() instanceof EntityLivingBase)
             {
-                boolean isSlownessExp = ItemDawnbreaker.RepairOpt.SLOW_EXPLODE.canAction(hdlFaith.getRepairDBCount());
+                int worldFaith = 0;
+                int worldFaithMax = 1000;   //適当な値
 
-                //■生成と追加
-                EntityMagicExplode explode = new EntityMagicExplode(undead.world, undead, isSlownessExp);
-//                undead.world.addWeatherEffect(explode);
-                undead.world.spawnEntity(explode);
+                World overworld = DimensionManager.getWorld(0);
+                if (overworld != null)
+                {
+                    IWorldHandler hdlW = overworld.getCapability(CapWorldHandler.WORLD_HANDLER_CAPABILITY, null);
+                    if (hdlW != null)
+                    {
+                        worldFaith = hdlW.getNumWorldFaith();
+                        worldFaithMax = hdlW.getNumWorldFaithDispMax();
+                    }
+                }
 
-                //Server -> Client(All)
-//                PacketHandler.INSTANCE.sendToAll(new MessageMagicExplode(explode));
+                //■世界信仰値の蓄積比率
+                float ratio = (float)worldFaith / (float)worldFaithMax;
+
+                if (undead.getRNG().nextFloat() <= 0.6f * ratio + 0.2f)
+                {
+                    boolean isSlownessExp = ItemDawnbreaker.RepairOpt.SLOW_EXPLODE.canAction(hdlF.getRepairDBCount());
+
+                    //■生成と追加
+                    EntityMagicExplode explode = new EntityMagicExplode(undead.world, undead, isSlownessExp, ratio);
+                    undead.world.spawnEntity(explode);
+                }
             }
 
             //■ドロップ
@@ -262,20 +280,12 @@ public class EventUndead
                 event.getSource().getImmediateSource() instanceof EntityPlayer &&
                 ((EntityPlayer)event.getSource().getImmediateSource()).getHeldItemMainhand().getItem() instanceof ItemDawnbreaker)
             {
-                int chance = ItemDawnbreaker.RepairOpt.countDrop(hdlFaith.getRepairDBCount()) - 1;
+                int chance = ItemDawnbreaker.RepairOpt.countDrop(hdlF.getRepairDBCount()) - 1;
                 if (chance <= 0) { return; }
 
                 int lootLevel = 1;
-//                if (ItemDawnbreaker.RepairOpt.DROPx4.canAction(hdlFaith.getRepairDBCount()) == true)
-//                {
-//                    chance = 3;
-//                }
-//                else if (ItemDawnbreaker.RepairOpt.DROPx2.canAction(hdlFaith.getRepairDBCount()) == true)
-//                {
-//                    chance = 1;
-//                }
 
-
+                //■ドロップ処理(privateメソッドの実行)
                 try
                 {
                     //■下ごしらえ

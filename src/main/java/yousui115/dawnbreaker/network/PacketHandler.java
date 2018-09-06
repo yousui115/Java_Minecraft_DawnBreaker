@@ -10,12 +10,19 @@ import yousui115.dawnbreaker.network.player.MessageFaith;
 import yousui115.dawnbreaker.network.player.MessageFaithHandler;
 import yousui115.dawnbreaker.network.player.MessageJoinWorld;
 import yousui115.dawnbreaker.network.player.MessageJoinWorldHandler;
+import yousui115.dawnbreaker.network.player.MsgOpenGUI;
+import yousui115.dawnbreaker.network.player.MsgOpenGUIServerHdlr;
 import yousui115.dawnbreaker.network.undead.MessageExplode;
 import yousui115.dawnbreaker.network.undead.MessageExplodeHandler;
 import yousui115.dawnbreaker.network.undead.MessageJoinUndead;
 import yousui115.dawnbreaker.network.undead.MessageJoinUndeadHandler;
 import yousui115.dawnbreaker.network.undead.MessageMagicExplode;
 import yousui115.dawnbreaker.network.undead.MessageMagicExplodeHandler;
+import yousui115.dawnbreaker.network.villager.MsgClientFaithHdlr;
+import yousui115.dawnbreaker.network.villager.MsgVillagerFaith;
+import yousui115.dawnbreaker.network.villager.MsgVillagerFaithHdlr;
+import yousui115.dawnbreaker.network.world.MsgWorldFaith;
+import yousui115.dawnbreaker.network.world.MsgWorldFaithHdlr;
 
 public class PacketHandler
 {
@@ -35,5 +42,13 @@ public class PacketHandler
         INSTANCE.registerMessage(MessageJoinUndeadHandler.class, MessageJoinUndead.class, 4, Side.SERVER);
         //■Server -> Client
         INSTANCE.registerMessage(MessageFlameHandler.class, MessageFlame.class, 5, Side.CLIENT);
+        //■Client -> Server
+        INSTANCE.registerMessage(MsgVillagerFaithHdlr.class, MsgVillagerFaith.class, 6, Side.SERVER);
+        //■Server -> Client
+        INSTANCE.registerMessage(MsgWorldFaithHdlr.class, MsgWorldFaith.class, 7, Side.CLIENT);
+        //■Server -> Client
+        INSTANCE.registerMessage(MsgClientFaithHdlr.class, MsgVillagerFaith.class, 8, Side.CLIENT);
+        //■Client -> Server
+        INSTANCE.registerMessage(MsgOpenGUIServerHdlr.class, MsgOpenGUI.class, 9, Side.SERVER);
     }
 }

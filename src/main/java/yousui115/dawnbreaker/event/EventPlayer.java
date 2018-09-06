@@ -2,11 +2,14 @@ package yousui115.dawnbreaker.event;
 
 import java.util.List;
 
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -15,17 +18,22 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import yousui115.dawnbreaker.Dawnbreaker;
 import yousui115.dawnbreaker.capability.player.CapabilityFaithHandler;
 import yousui115.dawnbreaker.capability.player.FaithHandler;
 import yousui115.dawnbreaker.capability.player.IFaithHandler;
-import yousui115.dawnbreaker.item.ItemDawnbreaker;
+import yousui115.dawnbreaker.capability.world.CapWorldHandler;
+import yousui115.dawnbreaker.capability.world.IWorldHandler;
 import yousui115.dawnbreaker.network.PacketHandler;
 import yousui115.dawnbreaker.network.player.MessageFaith;
 import yousui115.dawnbreaker.network.player.MessageJoinWorld;
+import yousui115.dawnbreaker.network.player.MsgOpenGUI;
 import yousui115.dawnbreaker.util.DBEnchs;
 import yousui115.dawnbreaker.util.DBUtils;
 
-public class EventEntityPlayer
+public class EventPlayer
 {
     /**
      * ■キャパビリティの追加
@@ -57,11 +65,14 @@ public class EventEntityPlayer
             //■
             if (event.player.hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
             {
-                FaithHandler hdlFaith = (FaithHandler)event.player.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
-                if (hdlFaith.isDirty() == true)
+                IWorldHandler hdlW = event.player.world.getCapability(CapWorldHandler.WORLD_HANDLER_CAPABILITY, null);
+                if (hdlW == null) { return; }
+
+                FaithHandler hdlF = (FaithHandler)event.player.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+                if (hdlF.isDirty() == true)
                 {
-                    PacketHandler.INSTANCE.sendTo(new MessageFaith(hdlFaith), (EntityPlayerMP) event.player);
-                    hdlFaith.resetDirty();
+                    PacketHandler.INSTANCE.sendTo(new MessageFaith(hdlF, hdlW.getNumWorldFaith()), (EntityPlayerMP) event.player);
+                    hdlF.resetDirty();
                 }
             }
         }
@@ -101,16 +112,34 @@ public class EventEntityPlayer
                 newPlayer.hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
             {
                 //■old
-                IFaithHandler hdlFaith_old = (IFaithHandler)oldPlayer.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+                IFaithHandler hdlF_old = (IFaithHandler)oldPlayer.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
 
                 //■new
-                IFaithHandler hdlFaith_new = (IFaithHandler)newPlayer.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+                IFaithHandler hdlF_new = (IFaithHandler)newPlayer.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
 
                 //■old -> new
-                hdlFaith_new.copy(hdlFaith_old);
+                hdlF_new.copy(hdlF_old);
             }
         }
     }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void openGUI(GuiOpenEvent event)
+    {
+        //■対象：コンテナGUI
+        if (event.getGui() instanceof GuiContainer == false) { return; }
+
+        //■ワールドきゃぱ
+        EntityPlayerSP player = (EntityPlayerSP)Dawnbreaker.proxy.getPlayer();
+        if (player == null) { return; }
+        IWorldHandler hdlW =  player.world.getCapability(CapWorldHandler.WORLD_HANDLER_CAPABILITY, null);
+        if (hdlW == null) { return; }
+
+        //■クライアント側の世界信仰値を送る(サーバと同値だと送り返されない)
+        PacketHandler.INSTANCE.sendToServer(new MsgOpenGUI(hdlW.getNumWorldFaith()));
+    }
+
 
     /**
      * ■ツールチップの表示
@@ -121,26 +150,36 @@ public class EventEntityPlayer
     {
         //■ドーンブレイカーのツールチップ
         ItemStack stack = event.getItemStack();
-        if (DBUtils.isEnmptyStack(stack) == true || stack.getItem() instanceof ItemDawnbreaker == false) { return; }
+        if (DBUtils.isDBwithBoD(stack) == false) { return; }
 
         //■ツールチップ文字列一覧
-        List<String> list = event.getToolTip();
+        List<String> listTip = event.getToolTip();
 
         if (event.getEntityPlayer() != null &&
             event.getEntityPlayer().hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
         {
-            IFaithHandler hdlFaith = event.getEntityPlayer().getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+            //■プレイヤーきゃぱ
+            IFaithHandler hdlF = event.getEntityPlayer().getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+            if (hdlF == null) { return; }
 
-            for (int idx = 0; idx < list.size(); idx++)
+            //■ワールドきゃぱ
+            IWorldHandler hdlW = event.getEntityPlayer().world.getCapability(CapWorldHandler.WORLD_HANDLER_CAPABILITY, null);
+            if (hdlW == null) { return; }
+
+            //■ツールチップ内から特定の文字列を探し、そこから追加情報を挿入する
+            for (int idx = 0; idx < listTip.size(); idx++)
             {
-                String str = list.get(idx);
+                String str = listTip.get(idx);
                 if (str.indexOf(DBEnchs.ENCH_BOD.getTransName()) != -1)
                 {
-                    list.remove(idx);
-                    list.add(idx, TextFormatting.YELLOW + DBEnchs.ENCH_BOD.getTransName());
-                    list.add(idx + 1, TextFormatting.DARK_AQUA + "Undead Kill : " + hdlFaith.getUndeadKillCount());
-                    list.add(idx + 2, TextFormatting.GRAY + " next : " + hdlFaith.getCountNext());
-                    list.add(idx + 3, TextFormatting.DARK_AQUA + "Repair Count : " + hdlFaith.getRepairDBCount());
+                    //■灰色の「Break of dawn」の行を削除
+                    listTip.remove(idx);
+                    //■黄色の「Break of dawn」を追加
+                    listTip.add(idx, TextFormatting.YELLOW + DBEnchs.ENCH_BOD.getTransName());
+                    listTip.add(idx + 1, TextFormatting.DARK_AQUA + "Undead Kill : " + hdlF.getUndeadKillCount());
+                    listTip.add(idx + 2, TextFormatting.GRAY + " next : " + hdlF.getCountNext());
+                    listTip.add(idx + 3, TextFormatting.DARK_AQUA + "Repair Count : " + hdlF.getRepairDBCount());
+                    listTip.add(idx + 4, TextFormatting.DARK_AQUA + "Faith : " + hdlW.getNumWorldFaithDisp() + " / " + hdlW.getNumWorldFaithDispMax());
                     break;
                 }
             }

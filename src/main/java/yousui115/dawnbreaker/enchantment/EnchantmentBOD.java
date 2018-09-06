@@ -112,7 +112,7 @@ public class EnchantmentBOD extends EnchantmentDamage
     {
         //■プレイヤーがメインハンドにドーンブレイカーを持ってる そして 信仰心がある
         if (userIn instanceof EntityPlayer &&
-            userIn.getHeldItemMainhand().getItem() instanceof ItemDawnbreaker &&
+            DBUtils.isDBwithBoD(userIn.getHeldItemMainhand()) == true &&
             userIn.hasCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null) == true)
         {
             IFaithHandler hdlFaith = userIn.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);

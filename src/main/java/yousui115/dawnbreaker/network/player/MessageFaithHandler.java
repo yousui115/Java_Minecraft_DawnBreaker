@@ -7,6 +7,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import yousui115.dawnbreaker.Dawnbreaker;
 import yousui115.dawnbreaker.capability.player.CapabilityFaithHandler;
 import yousui115.dawnbreaker.capability.player.FaithHandler;
+import yousui115.dawnbreaker.capability.world.CapWorldHandler;
+import yousui115.dawnbreaker.capability.world.IWorldHandler;
 
 public class MessageFaithHandler implements IMessageHandler<MessageFaith, IMessage>
 {
@@ -29,6 +31,11 @@ public class MessageFaithHandler implements IMessageHandler<MessageFaith, IMessa
             hdlFaith.setUndeadKillCount(messageIn.getCountUndeadKill());
             hdlFaith.setUndeadKillCount_hide(messageIn.getCountUndeadKill_hide());
             hdlFaith.setRepairDBCount(messageIn.getCountRepairDB());
+
+            IWorldHandler hdlW = player.world.getCapability(CapWorldHandler.WORLD_HANDLER_CAPABILITY, null);
+            if (hdlW == null) { return null; }
+
+            hdlW.setNumWorldFaith(messageIn.getNumWorldFaith());
         }
 
         return null;

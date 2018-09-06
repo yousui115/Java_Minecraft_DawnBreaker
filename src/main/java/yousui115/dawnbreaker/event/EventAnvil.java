@@ -5,8 +5,8 @@ import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import yousui115.dawnbreaker.capability.player.CapabilityFaithHandler;
 import yousui115.dawnbreaker.capability.player.IFaithHandler;
-import yousui115.dawnbreaker.item.ItemDawnbreaker;
 import yousui115.dawnbreaker.util.DBItems;
+import yousui115.dawnbreaker.util.DBUtils;
 
 public class EventAnvil
 {
@@ -18,7 +18,7 @@ public class EventAnvil
     public void onAnvilChange(AnvilUpdateEvent event)
     {
         //■left:DB(ダメージ有り)  +  right:meridama ならば処理する
-        if (event.getLeft().getItem() instanceof ItemDawnbreaker &&
+        if (DBUtils.isDBwithBoD(event.getLeft()) == true &&
             event.getLeft().getItemDamage() != 0 &&
             event.getRight() != null &&
             event.getRight().getItem() == DBItems.MERIDAMA)
@@ -41,7 +41,7 @@ public class EventAnvil
     public void onAnvilRepair(AnvilRepairEvent event)
     {
         //■left:DB(ダメージ有り)  +  right:meridama ならば処理する
-        if (event.getItemInput().getItem() instanceof ItemDawnbreaker &&
+        if (DBUtils.isDBwithBoD(event.getItemInput()) == true &&
             event.getItemInput().getItemDamage() != 0 &&
             event.getIngredientInput() != null &&
             event.getIngredientInput().getItem() == DBItems.MERIDAMA)

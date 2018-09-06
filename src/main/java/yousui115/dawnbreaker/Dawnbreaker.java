@@ -26,13 +26,17 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import yousui115.dawnbreaker.capability.player.CapabilityFaithHandler;
 import yousui115.dawnbreaker.capability.undead.CapabilityUndeadHandler;
+import yousui115.dawnbreaker.capability.villager.CapVillagerHandler;
+import yousui115.dawnbreaker.capability.world.CapWorldHandler;
 import yousui115.dawnbreaker.client.event.EventBakedModel;
 import yousui115.dawnbreaker.entity.EntityDawnbreaker;
 import yousui115.dawnbreaker.entity.EntityMagicExplode;
 import yousui115.dawnbreaker.event.EventAnvil;
 import yousui115.dawnbreaker.event.EventBlock;
-import yousui115.dawnbreaker.event.EventEntityPlayer;
+import yousui115.dawnbreaker.event.EventPlayer;
 import yousui115.dawnbreaker.event.EventUndead;
+import yousui115.dawnbreaker.event.EventVillager;
+import yousui115.dawnbreaker.event.EventWorld;
 import yousui115.dawnbreaker.network.PacketHandler;
 import yousui115.dawnbreaker.proxy.CommonProxy;
 import yousui115.dawnbreaker.util.DBBlocks;
@@ -47,7 +51,7 @@ public class Dawnbreaker
 //    public static final String MOD_DOMAIN = MOD_ID;
 
     public static final String MOD_NAME = "Dawnbreaker";
-    public static final String MOD_VERSION = "M1122_F2611_a7";
+    public static final String MOD_VERSION = "M1122_F2611_a8";
 
     @SidedProxy(clientSide = MOD_ID + ".proxy.ClientProxy",
                 serverSide = MOD_ID + ".proxy.CommonProxy")
@@ -72,6 +76,8 @@ public class Dawnbreaker
         //■Capabilityの登録
         CapabilityFaithHandler.register();
         CapabilityUndeadHandler.register();
+        CapVillagerHandler.register();
+        CapWorldHandler.register();
 
         //■パケット登録
         PacketHandler.register();
@@ -94,10 +100,13 @@ public class Dawnbreaker
     public void init(FMLInitializationEvent event)
     {
         //■Eventの登録
-        MinecraftForge.EVENT_BUS.register(new EventEntityPlayer());
+        MinecraftForge.EVENT_BUS.register(new EventPlayer());
         MinecraftForge.EVENT_BUS.register(new EventUndead());
+        MinecraftForge.EVENT_BUS.register(new EventVillager());
         MinecraftForge.EVENT_BUS.register(new EventAnvil());
         MinecraftForge.EVENT_BUS.register(new EventBlock());
+        MinecraftForge.EVENT_BUS.register(new EventWorld());
+
 
         proxy.registerLeyer();
 

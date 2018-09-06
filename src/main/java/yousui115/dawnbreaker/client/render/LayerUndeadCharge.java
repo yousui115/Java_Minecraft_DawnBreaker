@@ -12,7 +12,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import yousui115.dawnbreaker.Dawnbreaker;
 import yousui115.dawnbreaker.capability.undead.CapabilityUndeadHandler;
 import yousui115.dawnbreaker.capability.undead.IUndeadHandler;
-import yousui115.dawnbreaker.item.ItemDawnbreaker;
 import yousui115.dawnbreaker.util.DBUtils;
 
 @SideOnly(Side.CLIENT)
@@ -41,8 +40,7 @@ public class LayerUndeadCharge implements LayerRenderer<EntityCreature>
         if (renderUndead == null || modelUndead == null) { return; }
 
         //■ドーンブレイカーを手に持ってる必要がある。
-        if (DBUtils.isEnmptyStack(Dawnbreaker.proxy.getPlayer().getHeldItemMainhand()) == true ||
-            Dawnbreaker.proxy.getPlayer().getHeldItemMainhand().getItem() instanceof ItemDawnbreaker == false)
+        if (DBUtils.isDBwithBoD(Dawnbreaker.proxy.getPlayer().getHeldItemMainhand()) == false)
         {
             return;
         }

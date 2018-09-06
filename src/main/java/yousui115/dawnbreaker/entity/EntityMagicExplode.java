@@ -14,6 +14,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import yousui115.dawnbreaker.capability.undead.CapabilityUndeadHandler;
@@ -29,27 +30,31 @@ public class EntityMagicExplode extends Entity
     //■SLOWNESS
     protected boolean isSlowness;
 
+    //■影響比率
+    protected float ratio = 0f;
+
     //■多段Hit防止用リスト
     protected List<Entity> hitEntities = Lists.newArrayList();
 
 
     public EntityMagicExplode(World worldIn) { super(worldIn); }
-    public EntityMagicExplode(World worldIn, Entity entityIn, boolean isSlownessIn)
+    public EntityMagicExplode(World worldIn, Entity entityIn, boolean isSlownessIn, float ratioIn)
     {
         this(worldIn);
 
         trigger = entityIn;
-
         isSlowness = isSlownessIn;
+        ratio = ratioIn;
+
 
         //■爆心地
         setLocationAndAngles(trigger.posX, trigger.posY + trigger.height/2.0F, trigger.posZ, 0.0F, 0.0F);
 
-        //■サイズの設定
-        setSize(10.0F, 10.0F);
+        //■サイズ(全長)の設定 (5.0f - 20.0f)
+        setSize(15.0f * ratio + 5.0f, 15.0f * ratio + 5.0f);
 
         //■当たり判定エリアの補正
-        setEntityBoundingBox(this.getEntityBoundingBox().grow(this.width / 2f, this.height / 2f, this.width / 2));
+//        setEntityBoundingBox(this.getEntityBoundingBox().grow(this.width / 2f, this.height / 2f, this.width / 2));
 
         //■爆心Entityは対象外
         hitEntities.add(this.trigger);
@@ -192,7 +197,9 @@ public class EntityMagicExplode extends Entity
 
     protected List<Entity> collectEntity()
     {
-        return world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox());
+//        return world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox());
+        return world.getEntitiesWithinAABBExcludingEntity(this, new AxisAlignedBB(posX - width / 2f, posY - height / 2f, posZ - width / 2,
+                                                                                   posX + width / 2f, posY + height / 2f, posZ + width / 2));
     }
 
     public int getTickMax() { return ticksMax; }

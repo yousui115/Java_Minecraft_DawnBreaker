@@ -11,11 +11,25 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTTagCompound>
 {
     //TODO 下記メンバを保持するクラスを一つ作るべきか (FaithDataやらなんやら)
-    private int countUndeadKill;        //上位桁
-    private int countUndeadKill_hide;   //下一桁
 
+    //■アンデッド討伐数
+    private int countUndeadKill;        //総合
+    private int countUndeadKill_hide;   //メリ玉ノルマ
+
+    //■金床での修理回数
     private int countRepairDB;
 
+    //■集めた信仰値
+//    private int countFaith;
+
+    //■村人の取引回数保存用一時変数
+    //  (checkDirty不要, Client Only)
+    public int sumToolUses;
+
+    //■村人（クライアント側）の信仰値保存用一時変数
+    private int faithV;
+
+    //■サーバ側の値が変更された際のフラッグ
     private boolean isDirty;
 
     /**
@@ -26,6 +40,8 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
         countUndeadKill = 0;
         countUndeadKill_hide = 0;
         countRepairDB = 0;
+
+        faithV = 0;
 
         isDirty = false;
     }
@@ -102,8 +118,13 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
         countUndeadKill = faithIn.getUndeadKillCount();
         countUndeadKill_hide = faithIn.getUndeadKillCount_hide();
         countRepairDB = faithIn.getRepairDBCount();
+//        countFaith = faithIn.getFaith();
     }
 
+    @Override
+    public int getFaithV() { return faithV; }
+    @Override
+    public void setFaithV(int faithIn) { faithV = faithIn; }
 
     public boolean isDirty() { return isDirty; }
     public void resetDirty() { isDirty = false; }
@@ -115,14 +136,12 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
     {
         //TODO 何故か2回連続で呼ばれる
 
-        //↓こっちを使うのが正解っぽい？わかんなーい
-        //NBTTagCompound nbt = (NBTTagCompound)CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY.writeNBT(this, null);
-
         NBTTagCompound nbt = new NBTTagCompound();
 
         nbt.setInteger("UndeadKill", countUndeadKill);
         nbt.setInteger("UndeadKill_hide", countUndeadKill_hide);
         nbt.setInteger("RepairDB",   countRepairDB);
+//        nbt.setInteger("Faith", countFaith);
 
         return nbt;
     }
@@ -130,12 +149,10 @@ public class FaithHandler implements IFaithHandler, ICapabilitySerializable<NBTT
     @Override
     public void deserializeNBT(NBTTagCompound nbt)
     {
-        //↓こっちを使うのが正解っぽい？わかんなーい
-        //CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY.readNBT(this, null, nbt);
-
         countUndeadKill = nbt.getInteger("UndeadKill");
         countUndeadKill_hide = nbt.getInteger("UndeadKill_hide");
         countRepairDB   = nbt.getInteger("RepairDB");
+//        countFaith = nbt.getInteger("Faith");
     }
 
     @Override

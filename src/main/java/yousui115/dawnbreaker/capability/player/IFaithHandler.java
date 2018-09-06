@@ -31,6 +31,12 @@ public interface IFaithHandler
 
     default int getRepairDBCount_Max() { return 20; }
 
+//    void incFaith();
+//    void decFaith();
+//    int addFaith(int faithIn);
+//    int getFaith();
+//    void setFaith(int faith);
+
     //TODO
     // 洗脳した村の数
 
@@ -38,4 +44,6 @@ public interface IFaithHandler
      * ■コピー
      */
     void copy(IFaithHandler faithIn);
+    int getFaithV();
+    void setFaithV(int faithIn);
 }

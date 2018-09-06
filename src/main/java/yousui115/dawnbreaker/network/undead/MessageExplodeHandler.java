@@ -19,17 +19,18 @@ public class MessageExplodeHandler implements IMessageHandler<MessageExplode, IM
     @Override
     public IMessage onMessage(MessageExplode message, MessageContext ctx)
     {
+        //■爆心地であるEntityを掴む
         EntityPlayer player = Dawnbreaker.proxy.getPlayer();
         if (player == null) { return null; }
-
         Entity entity = player.world.getEntityByID(message.getEntityID());
 
+        //■アンデッドきゃぱを持っている。
         if (entity instanceof EntityCreature &&
             entity.hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY,null) == true)
         {
-            IUndeadHandler hdlUndead = (IUndeadHandler)entity.getCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null);
-            hdlUndead.setTickAvoid(message.getTickAvoid());
-            hdlUndead.setHasTargetPlayer(message.hasTargetPlayer());
+            IUndeadHandler hdlU = (IUndeadHandler)entity.getCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null);
+            hdlU.setTickAvoid(message.getTickAvoid());
+            hdlU.setHasTargetPlayer(message.hasTargetPlayer());
 
 //            System.out.println("Client : " + entity.getEntityId() + " : " + message.getTickAvoid());
         }

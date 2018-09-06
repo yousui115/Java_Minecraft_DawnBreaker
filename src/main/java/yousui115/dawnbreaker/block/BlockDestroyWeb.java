@@ -43,7 +43,7 @@ public class BlockDestroyWeb extends Block
     public static final List<EnumFacing> FACES = Lists.newArrayList(EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.UP, EnumFacing.DOWN);
 
     //■連続破壊対象マテリアル
-    public static final List<Material> MATERIALS = Lists.newArrayList(Material.LEAVES, Material.WEB);
+    public static final List<Material> MATERIALS = Lists.newArrayList(Material.LEAVES, Material.WEB, Material.VINE);
 
     /**
      * ■こんすとらくた
@@ -131,7 +131,8 @@ public class BlockDestroyWeb extends Block
     {
         if (generation % 3 == 0)
         {
-            worldIn.playSound((EntityPlayer)null, targetPosIn, SoundEvents.ENTITY_GHAST_SHOOT, SoundCategory.BLOCKS, 0.3F, 1.0F);
+            float volume = (float)(MAX - generation) / (float)MAX * 0.3f;
+            worldIn.playSound((EntityPlayer)null, targetPosIn, SoundEvents.ENTITY_GHAST_SHOOT, SoundCategory.BLOCKS, volume, 1.0F);
         }
     }
 

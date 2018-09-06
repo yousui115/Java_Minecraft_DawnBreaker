@@ -23,7 +23,7 @@ public class MessageMagicExplodeHandler implements IMessageHandler<MessageMagicE
         EntityMagicExplode magic = null;
         if (trigger != null)
         {
-            magic = new EntityMagicExplode(player.world, trigger, false);
+            magic = new EntityMagicExplode(player.world, trigger, false, 0f);
             magic.setEntityId(message.getEntityID());
 //            magic.serverPosX = message.getPosX();
 //            magic.serverPosY = message.getPosY();

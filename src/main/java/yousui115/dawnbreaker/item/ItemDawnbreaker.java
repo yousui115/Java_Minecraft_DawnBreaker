@@ -1,9 +1,6 @@
 package yousui115.dawnbreaker.item;
 
-import java.util.List;
 import java.util.Random;
-
-import com.google.common.collect.Lists;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -17,14 +14,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import yousui115.dawnbreaker.block.BlockDestroyWeb;
 import yousui115.dawnbreaker.entity.EntityDawnbreaker;
 import yousui115.dawnbreaker.util.DBEnchs;
 import yousui115.dawnbreaker.util.DBItems;
+import yousui115.dawnbreaker.util.DBUtils;
 
 public class ItemDawnbreaker extends ItemSword
 {
     //■高速破壊対象マテリアル
-    public static final List<Material> MATERIALS = Lists.newArrayList(Material.LEAVES, Material.WEB);
+//    public static final List<Material> MATERIALS = Lists.newArrayList(Material.LEAVES, Material.WEB);
 
     /**
      * ■コンストラクタ
@@ -38,10 +37,10 @@ public class ItemDawnbreaker extends ItemSword
     @Override
     public float getDestroySpeed(ItemStack stack, IBlockState state)
     {
-
         Material material = state.getMaterial();
 
-        if (MATERIALS.contains(material) == true)
+        if (BlockDestroyWeb.MATERIALS.contains(material) == true &&
+            DBUtils.isDBwithBoD(stack) == true)
         {
             return 200.0F;
         }
@@ -64,7 +63,8 @@ public class ItemDawnbreaker extends ItemSword
         {
             damage = 0;
         }
-        else if (MATERIALS.contains(material) == true)
+        else if (BlockDestroyWeb.MATERIALS.contains(material) == true &&
+                  DBUtils.isDBwithBoD(stack) == true)
         {
             damage = 1;
         }
@@ -168,6 +168,12 @@ public class ItemDawnbreaker extends ItemSword
     @Override
     public Entity createEntity(World world, Entity location, ItemStack itemstack)
     {
+        //■エンチャントが外れていると、独自Entityは顕現しない。(MOD対策)
+        if (DBUtils.isDBwithBoD(itemstack) == false)
+        {
+            return location;
+        }
+
         BlockPos pos = new BlockPos(location.posX, location.posY - 1, location.posZ);
 
         EntityDawnbreaker dawnbreaker = new EntityDawnbreaker(location.world, pos, location.rotationYaw);
