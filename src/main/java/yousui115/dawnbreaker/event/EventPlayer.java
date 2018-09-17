@@ -103,7 +103,7 @@ public class EventPlayer
     public void onClonePlayer(PlayerEvent.Clone event)
     {
         //■死亡時の転生
-        if (event.isWasDeath() == true)
+//        if (event.isWasDeath() == true)
         {
             EntityPlayer oldPlayer = event.getOriginal();
             EntityPlayer newPlayer = event.getEntityPlayer();

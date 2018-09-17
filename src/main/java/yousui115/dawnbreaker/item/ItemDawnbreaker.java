@@ -227,14 +227,14 @@ public class ItemDawnbreaker extends ItemSword
         //■ドロップ抽選回数
         public static int countDrop(int countRepair)
         {
-            int drop = 1;
+            int drop = 0;
             if (DROPx4.count <= countRepair)
             {
-                drop =  4;
+                drop =  30;
             }
             else if (DROPx2.count <= countRepair)
             {
-                drop =  2;
+                drop =  10;
             }
 
             return drop;

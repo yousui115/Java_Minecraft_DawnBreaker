@@ -1,10 +1,7 @@
 package yousui115.dawnbreaker.event;
 
-import java.lang.reflect.Method;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,9 +11,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -24,9 +22,9 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import yousui115.dawnbreaker.Dawnbreaker;
 import yousui115.dawnbreaker.capability.player.CapabilityFaithHandler;
 import yousui115.dawnbreaker.capability.player.IFaithHandler;
 import yousui115.dawnbreaker.capability.undead.CapabilityUndeadHandler;
@@ -235,6 +233,12 @@ public class EventUndead
                 if (inv != null && inv instanceof TileEntityChest)
                 {
                     ((TileEntityChest)inv).setInventorySlotContents(13, new ItemStack(DBItems.MERIDAMA, 1));
+
+                    //■音とメッセージでお知らせ
+                    EntityPlayer player = (EntityPlayer)event.getSource().getTrueSource();
+                    world.playEvent((EntityPlayer)null, 1031, new BlockPos(player), 0);
+                    player.sendMessage(new TextComponentTranslation(I18n.translateToLocal("message.meridama_get")));
+
                 }
             }
         }
@@ -242,10 +246,10 @@ public class EventUndead
         //■爆発チャンス！ + ドロップ増加
         if (hdlF != null && undead.hasCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null) == true)
         {
-            IUndeadHandler hdlUndead = (IUndeadHandler)undead.getCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null);
+            IUndeadHandler hdlU = (IUndeadHandler)undead.getCapability(CapabilityUndeadHandler.UNDEAD_HANDLER_CAPABILITY, null);
 
             //■「爆発する権利をもってる」 かつ 「生物の手で死亡」 かつ「50%の確率」
-            if (hdlUndead.hasChanceExplode() == true &&
+            if (hdlU.hasChanceExplode() == true &&
                 event.getSource().getTrueSource() instanceof EntityLivingBase)
             {
                 int worldFaith = 0;
@@ -276,42 +280,74 @@ public class EventUndead
             }
 
             //■ドロップ
-            if (event.getSource() != null &&
-                event.getSource().getImmediateSource() instanceof EntityPlayer &&
-                ((EntityPlayer)event.getSource().getImmediateSource()).getHeldItemMainhand().getItem() instanceof ItemDawnbreaker)
-            {
-                int chance = ItemDawnbreaker.RepairOpt.countDrop(hdlF.getRepairDBCount()) - 1;
-                if (chance <= 0) { return; }
-
-                int lootLevel = 1;
-
-                //■ドロップ処理(privateメソッドの実行)
-                try
-                {
-                    //■下ごしらえ
-                    Class[] args = { boolean.class, int.class, DamageSource.class };
-                    Class<EntityLiving> c = EntityLiving.class;
-
-                    //■ターゲットメソッド
-                    String mName = Dawnbreaker.isJar == true ? "func_184610_a" : "dropLoot";
-                    Method m = c.getDeclaredMethod(mName, args);
-
-                    //■アクセシビリティ
-                    m.setAccessible(true);
-
-                    for (int idx = 0; idx < chance; idx++)
-                    {
-                        //■アクセス！
-                        m.invoke((EntityLiving)event.getEntityLiving(), true, lootLevel, event.getSource());
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    throw new RuntimeException(e);
-                }
-            }
-
+//            if (event.getSource() != null &&
+//                event.getSource().getImmediateSource() instanceof EntityPlayer &&
+//                ((EntityPlayer)event.getSource().getImmediateSource()).getHeldItemMainhand().getItem() instanceof ItemDawnbreaker)
+//            {
+//                int chance = ItemDawnbreaker.RepairOpt.countDrop(hdlF.getRepairDBCount()) - 1;
+//                if (chance <= 0) { return; }
+//
+//                int lootLevel = 1;
+//
+//                //■ドロップ処理(privateメソッドの実行)
+//                try
+//                {
+//                    //■下ごしらえ
+//                    Class[] args = { boolean.class, int.class, DamageSource.class };
+//                    Class<EntityLiving> c = EntityLiving.class;
+//
+//                    //■ターゲットメソッド
+//                    String mName = Dawnbreaker.isJar == true ? "func_184610_a" : "dropLoot";
+//                    Method m = c.getDeclaredMethod(mName, args);
+//
+//                    //■アクセシビリティ
+//                    m.setAccessible(true);
+//
+//                    for (int idx = 0; idx < chance; idx++)
+//                    {
+//                        //■アクセス！
+//                        m.invoke((EntityLiving)event.getEntityLiving(), true, lootLevel, event.getSource());
+//                    }
+//
+//                }
+//                catch (Exception e)
+//                {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//
         }
+    }
+
+    /**
+     * ■Undead討伐時のLootingLevelを、Dawnbreakerの状態で変化させる。
+     * @param event
+     */
+    @SubscribeEvent
+    public void lootingLevel(LootingLevelEvent event)
+    {
+        //■サーバのみ
+        if (event.getEntityLiving() == null ||
+            event.getEntityLiving().world.isRemote) { return; }
+
+        //■ターゲット：アンデッド
+        if (DBUtils.isUndead(event.getEntityLiving()) == false) { return; }
+
+        //■アタッカー：プレイヤー
+        if (event.getDamageSource() == null ||
+            event.getDamageSource().getTrueSource() instanceof EntityPlayer == false) { return; }
+
+        EntityPlayer player = (EntityPlayer)event.getDamageSource().getTrueSource();
+
+        //■正規Dawnbreakerをメインハンドに持っている
+        if (DBUtils.isDBwithBoD(player.getHeldItemMainhand()) == false) { return; }
+
+        IFaithHandler hdlH = player.getCapability(CapabilityFaithHandler.FAITH_HANDLER_CAPABILITY, null);
+        if (hdlH == null) { return; }
+
+        //■リペア回数に応じたドロップ率
+        int countD = ItemDawnbreaker.RepairOpt.countDrop(hdlH.getRepairDBCount());
+
+        event.setLootingLevel(countD);
     }
 }

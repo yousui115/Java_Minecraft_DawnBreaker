@@ -3,6 +3,7 @@ package yousui115.dawnbreaker.client.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.EntityCreature;
@@ -87,6 +88,10 @@ public class LayerUndeadCharge implements LayerRenderer<EntityCreature>
         GlStateManager.disableLighting();
         // ▼
         GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
+        // ▼指定のテクスチャユニットとBrightnessX,Y
+        float fx = OpenGlHelper.lastBrightnessX;
+        float fy = OpenGlHelper.lastBrightnessY;
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 220f, 220f);
 
         GlStateManager.disableDepth();
 
@@ -101,6 +106,10 @@ public class LayerUndeadCharge implements LayerRenderer<EntityCreature>
 
 
         GlStateManager.enableDepth();
+
+        // ▼
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, fx, fy);
+
         // ▼
         GlStateManager.matrixMode(5890);
         // ▼

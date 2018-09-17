@@ -32,7 +32,7 @@ public class DBUtils
      * @param stackIn
      * @return
      */
-    public static boolean isDBwithBoD(ItemStack stackIn)
+    public static boolean isDBwithBoD(@Nullable ItemStack stackIn)
     {
         //■このItemStackがDawnbreakerであるか否か
         if (DBUtils.isEnmptyStack(stackIn) == true ||
@@ -41,16 +41,15 @@ public class DBUtils
 
         //■エンチャント「Break of dawn」が付与されているか否か
         NBTTagList enchList = stackIn.getEnchantmentTagList();
-        for (int j = 0; j < enchList.tagCount(); ++j)
-        {
-            NBTTagCompound nbttagcompound = enchList.getCompoundTagAt(j);
-            int enchID = nbttagcompound.getShort("id");
+        if (enchList.tagCount() != 1) { return false; }
 
-            //■かんぺこ
-            if (DBEnchs.ENCH_BOD == Enchantment.getEnchantmentByID(enchID))
-            {
-                return true;
-            }
+        NBTTagCompound nbttagcompound = enchList.getCompoundTagAt(0);
+        int enchID = nbttagcompound.getShort("id");
+
+        //■かんぺこ
+        if (DBEnchs.ENCH_BOD == Enchantment.getEnchantmentByID(enchID))
+        {
+            return true;
         }
 
         return false;

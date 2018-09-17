@@ -56,7 +56,7 @@ public class RenderDawnbreaker extends Render<EntityDawnbreaker>
 
         // ▼
         //GlStateManager.disableLighting();
-        //OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
 
         // ▼
         GlStateManager.enableAlpha();
@@ -66,9 +66,6 @@ public class RenderDawnbreaker extends Render<EntityDawnbreaker>
         GlStateManager.enableBlend();
         //GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-
-        // ▼指定のテクスチャユニットとBrightnessX,Y
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 220f, 220f);
 
         // ▼深度テスト
         //GlStateManager.disableDepth();
