@@ -1,8 +1,8 @@
-# [MinecraftMod] Dawnbreaker [MC1.12.2]
-## ■DL(a8)
-https://www.dropbox.com/s/07dvh692h6t0se5/dawnbreaker_M1122_F2611_a8.jar?dl=0
+# Dawnbreaker
+## ■DL(a9)
+https://www.dropbox.com/s/oulgsb88yjn3eia/dawnbreaker_M1122_F2611_a9.jar?dl=0
 
-## ■動作環境<br>
+## ■開発環境<br>
 MineCraft 1.12.2<br>
 Forge 2611<br>
 
@@ -46,11 +46,13 @@ Forge 2611<br>
 ## ■修理特典
 - 2回：追加ダメージ 2倍
 - 4回：DBの攻撃で、アンデッドに鈍足効果
-- 6回：アイテムドロップ抽選回数 2倍
+- 6回：アンデッドのアイテムドロップ量増加(小)
 - 10回：追加ダメージ 3倍
 - 12回：DBの爆発を受けたアンデッドに鈍足効果
-- 14回：アイテムドロップ抽選回数 4倍
+- 14回：アンデッドのアイテムドロップ量増加(大)
 - 16回：低確率でアンデッド即死
+
+(※DBでの攻撃・トドメを前提とする)
 
 ## ■信仰値
 ### 村人
